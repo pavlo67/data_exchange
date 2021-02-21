@@ -4,13 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/pavlo67/common/common"
-
 	"github.com/pavlo67/data_exchange/components/ns"
 	"github.com/pavlo67/data_exchange/components/vcs"
 )
-
-type ID common.IDStr
 
 type Content struct {
 	Title    string    `json:",omitempty" bson:",omitempty"`
@@ -22,7 +18,6 @@ type Content struct {
 }
 
 type RecordItem struct {
-	ID        ID          `json:"id"         bson:"_id"`
 	IssuedID  ns.ID       // TODO: ba careful, IssuedID can't be empty
 	OwnerID   ns.ID       `json:",omitempty" bson:",omitempty"`
 	ViewerID  ns.ID       `json:",omitempty" bson:",omitempty"`

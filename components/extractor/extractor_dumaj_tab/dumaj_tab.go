@@ -3,6 +3,9 @@ package extractor_dumaj_tab
 import (
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/config"
+	"github.com/pavlo67/common/common/errors"
+	"github.com/pavlo67/common/common/filelib"
+	"github.com/pavlo67/data_exchange/components/extractor/extractor_helpers"
 
 	"github.com/pavlo67/data_exchange/components/extractor"
 )
@@ -20,46 +23,23 @@ func New() (extractor.Operator, error) {
 
 const onDraft = "on extractorDumajTab.Draft(): "
 
-// from internal database
 func (exchangeOp *extractorDumajTab) Draft(access config.Access, pathTo string) (fileTo string, err error) {
-	//correctedPathTo, err := filelib.Dir(pathTo)
-	//if err != nil {
-	//	return "", errors.CommonError(err, onNew)
-	//}
 
-	//var filename string
-	//// TODO read filename from selector
-	//
-	//data, err := ioutil.ReadFile(filename)
-	//if err != nil {
-	//	return fmt.Errorf(onRead+": reading %s got %s", filename, err)
-	//}
-	//
-	//var recordsExchangePack exchange_0_1.RecordsExchangePack
-	//if err = json.Unmarshal(data, &recordsExchangePack); err != nil {
-	//	return fmt.Errorf(onRead+": reading %s got %s", filename, err)
-	//}
-	//exchangeOp.recordsExchangePack = recordsExchangePack
+	correctedPathTo, err := filelib.Dir(pathTo)
+	if err != nil {
+		return "", errors.CommonError(err, onDraft)
+	}
+
+	data, tab, err := extractor_helpers.Tab(access.Path)
+
+	l.Infof("%s [%d bytes / %d lines] --> %s", access.Path, len(data), len(tab), correctedPathTo)
 
 	return "", common.ErrNotImplemented
 }
 
 const onConvert = "on extractorDumajTab.Convert()"
 
-// into internal database
 func (exchangeOp *extractorDumajTab) Convert(access config.Access, to interface{}) (result interface{}, err error) {
-	//
-	//data, err := json.Marshal(exchangeOp.recordsExchangePack)
-	//if err != nil {
-	//	return fmt.Errorf(onSave+": marshalling data got %s", err)
-	//}
-	//
-	//var filename string
-	//// TODO read filename from selector
-	//
-	//if err = ioutil.WriteFile(filename, data, 0644); err != nil {
-	//	return fmt.Errorf(onSave+": writing into %s got %s", filename, err)
-	//}
 
 	return nil, common.ErrNotImplemented
 }

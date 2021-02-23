@@ -31,10 +31,13 @@ func (es *extractorStarter) Name() string {
 }
 
 func (es *extractorStarter) Prepare(cfg *config.Config, options common.Map) error {
-	es.pathTo = options.StringDefault("path_to", "")
-	if err := cfg.Value("extractor_cli", &es.access); err != nil {
-		return err
+
+	var ok bool
+	if es.access, ok = options["access"].(config.Access); !ok {
+		return fmt.Errorf(`no options["access"].(config.Access) in %#v`, options)
 	}
+
+	es.pathTo = options.StringDefault("path_to", "")
 
 	return nil
 }

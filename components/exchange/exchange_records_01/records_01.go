@@ -1,52 +1,58 @@
-package exchange_0_1_files
+package exchange_records_01
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pavlo67/common/common/crud"
+	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/errors"
 	"github.com/pavlo67/common/common/filelib"
 	"github.com/pavlo67/common/common/selectors"
 
 	"github.com/pavlo67/data_exchange/components/exchange"
-	"github.com/pavlo67/data_exchange/components/exchange/exchange_0_1"
 )
 
 var _ exchange.Operator = &exchange01Files{}
 
 type exchange01Files struct {
-	path                string
-	recordsExchangePack exchange_0_1.RecordsExchangePack
+	path                  string
+	recordsExchangePack01 exchange.RecordsExchangePack01
 }
 
 const onNew = "on exchange01Files.New(): "
 
-func New(path string) (exchange.Operator, crud.Cleaner, error) {
+func New(path string) (exchange.Operator, error) {
 	correctedPath, err := filelib.Dir(path)
 	if err != nil {
-		return nil, nil, errors.CommonError(err, onNew)
+		return nil, errors.CommonError(err, onNew)
 	}
 
 	exchangeOp := exchange01Files{
 		path: correctedPath,
 	}
 
-	return &exchangeOp, &exchangeOp, nil
+	return &exchangeOp, nil
 }
 
-func (exchangeOp *exchange01Files) Name() string {
-	return string(InterfaceKey)
-}
+//func (exchangeOp *exchange01Files) Name() string {
+//	return string(InterfaceKey)
+//}
+//
+//func (exchangeOp *exchange01Files) Version() exchange.Version {
+//	return exchange.Version("0.1.0")
+//}
 
-func (exchangeOp *exchange01Files) Version() exchange.Version {
-	return exchange.Version("0.1.0")
-}
-
-func (exchangeOp *exchange01Files) Clean(*crud.Options) error {
-	exchangeOp.recordsExchangePack = exchange_0_1.RecordsExchangePack{}
+func (exchangeOp *exchange01Files) Reset() error {
+	exchangeOp.recordsExchangePack01 = exchange.RecordsExchangePack01{}
 	return nil
+}
+
+const onStat = "on exchange01Files.Stat(): "
+
+// from internal database
+func (exchangeOp *exchange01Files) Stat(params common.Map) error {
+	return common.ErrNotImplemented
 }
 
 const onRead = "on exchange01Files.Read(): "
@@ -62,11 +68,11 @@ func (exchangeOp *exchange01Files) Read(selector *selectors.Term) error {
 		return fmt.Errorf(onRead+": reading %s got %s", filename, err)
 	}
 
-	var recordsExchangePack exchange_0_1.RecordsExchangePack
+	var recordsExchangePack exchange.RecordsExchangePack01
 	if err = json.Unmarshal(data, &recordsExchangePack); err != nil {
 		return fmt.Errorf(onRead+": reading %s got %s", filename, err)
 	}
-	exchangeOp.recordsExchangePack = recordsExchangePack
+	exchangeOp.recordsExchangePack01 = recordsExchangePack
 
 	return nil
 }
@@ -76,7 +82,7 @@ const onSave = "on exchange01Files.Save()"
 // into internal database
 func (exchangeOp *exchange01Files) Save(selector *selectors.Term) error {
 
-	data, err := json.Marshal(exchangeOp.recordsExchangePack)
+	data, err := json.Marshal(exchangeOp.recordsExchangePack01)
 	if err != nil {
 		return fmt.Errorf(onSave+": marshalling data got %s", err)
 	}
@@ -96,12 +102,12 @@ const onImport = "on exchange01Files.Import()"
 // from external source
 func (exchangeOp *exchange01Files) Import(selector *selectors.Term, structure, data interface{}) error {
 	switch v := data.(type) {
-	case exchange_0_1.RecordsExchangePack:
-		exchangeOp.recordsExchangePack = v
+	case exchange.RecordsExchangePack01:
+		exchangeOp.recordsExchangePack01 = v
 		return nil
-	case *exchange_0_1.RecordsExchangePack:
+	case *exchange.RecordsExchangePack01:
 		if v != nil {
-			exchangeOp.recordsExchangePack = *v
+			exchangeOp.recordsExchangePack01 = *v
 			return nil
 		}
 
@@ -113,5 +119,5 @@ func (exchangeOp *exchange01Files) Import(selector *selectors.Term, structure, d
 
 // to external source
 func (exchangeOp *exchange01Files) Export(selector *selectors.Term) (structure, data interface{}, err error) {
-	return nil, exchangeOp.recordsExchangePack, nil
+	return nil, exchangeOp.recordsExchangePack01, nil
 }

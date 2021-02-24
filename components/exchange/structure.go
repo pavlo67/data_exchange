@@ -1,4 +1,4 @@
-package exchange_0_5
+package exchange
 
 type Field struct {
 	Name   string
@@ -10,3 +10,5 @@ type Field struct {
 type Structure []Field
 
 type Data []interface{}
+
+type TabbedData [][]string

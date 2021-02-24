@@ -1,12 +1,14 @@
-package extractor_helpers
+package extraction
 
 import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+
+	"github.com/pavlo67/data_exchange/components/exchange"
 )
 
-func Tab(filename string) ([]byte, [][]string, error) {
+func Tab(filename string) ([]byte, exchange.TabbedData, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, nil, fmt.Errorf("reading %s got %s", filename, err)

@@ -1,4 +1,4 @@
-package exchange_0_1_files
+package exchange_records_01
 
 import (
 	"fmt"

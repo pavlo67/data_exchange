@@ -1,4 +1,4 @@
-package exchange_0_1
+package exchange
 
 import (
 	"encoding/json"
@@ -27,18 +27,18 @@ type RecordItem struct {
 	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
 }
 
-type RecordsExchangePack struct {
+type RecordsExchangePack01 struct {
 	Title     string
 	Items     []RecordItem
 	History   vcs.History
 	CreatedAt time.Time
 }
 
-func (ris *RecordsExchangePack) Import(data []byte, path string) (filenames []string, err error) {
+func (ris *RecordsExchangePack01) Import(data []byte, path string) (filenames []string, err error) {
 	return nil, json.Unmarshal(data, ris)
 }
 
-func (ris RecordsExchangePack) Export(path string) (data []byte, filenames []string, err error) {
+func (ris RecordsExchangePack01) Export(path string) (data []byte, filenames []string, err error) {
 	jsonBytes, err := json.Marshal(ris)
 	return jsonBytes, nil, err
 }

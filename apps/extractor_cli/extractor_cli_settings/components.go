@@ -4,7 +4,6 @@ import (
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/config"
 	"github.com/pavlo67/common/common/starter"
-	"github.com/pavlo67/data_exchange/components/extractor/extractor_dumaj_tab"
 )
 
 func Components() ([]starter.Starter, error) {
@@ -15,11 +14,11 @@ func Components() ([]starter.Starter, error) {
 		//{connect_sqlite.Starter(), nil},
 
 		// auth/persons components
-		{extractor_dumaj_tab.Starter(), nil},
+		{transform_table_bytes_tabbed.Starter(), nil},
 
 		// actions starter (connecting specific actions to the corresponding action managers)
 		{Starter(), common.Map{
-			"access":  config.Access{Path: "../_exchange/_cliens.tab_"},
+			"access":  config.Access{Path: "../_transform/_cliens.tab_"},
 			"path_to": "./",
 		}},
 	}

@@ -1,12 +1,17 @@
-package exchange
+package transform
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/pavlo67/data_exchange/components/ns"
 	"github.com/pavlo67/data_exchange/components/vcs"
 )
+
+// general table -------------------------------------------------------
+
+type Table [][]string
+
+// records -------------------------------------------------------------
 
 type Content struct {
 	Title    string    `json:",omitempty" bson:",omitempty"`
@@ -34,11 +39,11 @@ type RecordsExchangePack01 struct {
 	CreatedAt time.Time
 }
 
-func (ris *RecordsExchangePack01) Import(data []byte, path string) (filenames []string, err error) {
-	return nil, json.Unmarshal(data, ris)
-}
-
-func (ris RecordsExchangePack01) Export(path string) (data []byte, filenames []string, err error) {
-	jsonBytes, err := json.Marshal(ris)
-	return jsonBytes, nil, err
-}
+//func (ris *RecordsExchangePack01) In(data []byte, path string) (filenames []string, err error) {
+//	return nil, json.Unmarshal(data, ris)
+//}
+//
+//func (ris RecordsExchangePack01) Out(path string) (data []byte, filenames []string, err error) {
+//	jsonBytes, err := json.Marshal(ris)
+//	return jsonBytes, nil, err
+//}

@@ -1,4 +1,4 @@
-package exchange
+package transform
 
 import (
 	"github.com/pavlo67/common/common/errors"
@@ -9,19 +9,19 @@ const KeyExportFinished errors.Key = "export_finished"
 
 var ErrExportFinished = errors.KeyableError(KeyExportFinished, nil)
 
-const onRun = "on exchange.Run()"
+const onRun = "on transform.Run()"
 
-func Run(exchangeOpFrom, exchangeOpTo Operator, selectorFrom, selectorTo *selectors.Term) error {
-	if err := exchangeOpFrom.Clean(nil); err != nil {
+func Run(transformOpFrom, transformOpTo Operator, selectorFrom, selectorTo *selectors.Term) error {
+	if err := transformOpFrom.Clean(nil); err != nil {
 		return errors.CommonError(err, onRun)
 	}
 
-	if err := exchangeOpTo.Clean(nil); err != nil {
+	if err := transformOpTo.Clean(nil); err != nil {
 		return errors.CommonError(err, onRun)
 	}
 
 	for {
-		if err := exchangeOpFrom.Read(selectorFrom); err != nil {
+		if err := transformOpFrom.Read(selectorFrom); err != nil {
 			commonErr := errors.CommonError(err)
 			if commonErr.Key() != KeyExportFinished {
 				return commonErr.Append(onRun)
@@ -29,16 +29,16 @@ func Run(exchangeOpFrom, exchangeOpTo Operator, selectorFrom, selectorTo *select
 			break
 		}
 
-		structure, data, err := exchangeOpFrom.Export(nil)
+		structure, data, err := transformOpFrom.Out(nil)
 		if err != nil {
 			return errors.CommonError(err, onRun)
 		}
 
-		if err := exchangeOpTo.Import(selectorTo, structure, data); err != nil {
+		if err := transformOpTo.In(selectorTo, structure, data); err != nil {
 			return errors.CommonError(err, onRun)
 		}
 
-		if err := exchangeOpFrom.Save(nil); err != nil {
+		if err := transformOpFrom.Save(nil); err != nil {
 			return errors.CommonError(err, onRun)
 		}
 	}
@@ -46,19 +46,19 @@ func Run(exchangeOpFrom, exchangeOpTo Operator, selectorFrom, selectorTo *select
 	return nil
 }
 
-const onRunByOnePiece = "on exchange.RunByOnePiece()"
+const onRunByOnePiece = "on transform.RunByOnePiece()"
 
-func RunByOnePiece(exchangeOpFrom, exchangeOpTo Operator, selectorFrom, selectorTo *selectors.Term) error {
-	if err := exchangeOpFrom.Clean(nil); err != nil {
+func RunByOnePiece(transformOpFrom, transformOpTo Operator, selectorFrom, selectorTo *selectors.Term) error {
+	if err := transformOpFrom.Clean(nil); err != nil {
 		return errors.CommonError(err, onRunByOnePiece)
 	}
 
-	if err := exchangeOpTo.Clean(nil); err != nil {
+	if err := transformOpTo.Clean(nil); err != nil {
 		return errors.CommonError(err, onRunByOnePiece)
 	}
 
 	for {
-		if err := exchangeOpFrom.Read(selectorFrom); err != nil {
+		if err := transformOpFrom.Read(selectorFrom); err != nil {
 			commonErr := errors.CommonError(err)
 			if commonErr.Key() != KeyExportFinished {
 				return commonErr.Append(onRunByOnePiece)
@@ -67,16 +67,16 @@ func RunByOnePiece(exchangeOpFrom, exchangeOpTo Operator, selectorFrom, selector
 		}
 	}
 
-	structure, data, err := exchangeOpFrom.Export(nil)
+	structure, data, err := transformOpFrom.Out(nil)
 	if err != nil {
 		return errors.CommonError(err, onRunByOnePiece)
 	}
 
-	if err := exchangeOpTo.Import(selectorTo, structure, data); err != nil {
+	if err := transformOpTo.In(selectorTo, structure, data); err != nil {
 		return errors.CommonError(err, onRunByOnePiece)
 	}
 
-	if err := exchangeOpFrom.Save(nil); err != nil {
+	if err := transformOpFrom.Save(nil); err != nil {
 		return errors.CommonError(err, onRunByOnePiece)
 	}
 

@@ -13,7 +13,7 @@ var (
 	BuildCommit = ""
 )
 
-const serviceName = "extractor"
+const serviceName = "transform"
 
 func main() {
 	versionOnly, _, cfgService, l := apps.Prepare(BuildDate, BuildTag, BuildCommit, serviceName, apps.AppsSubpathDefault)

@@ -1,5 +1,7 @@
 package transform
 
+import "github.com/pavlo67/data_exchange/components/vcs"
+
 type Field struct {
 	Name   string
 	Type   string
@@ -8,6 +10,8 @@ type Field struct {
 }
 
 type Structure struct {
-	Fields []Field
-	Table  Table
+	Title   string
+	Fields  []Field
+	Table   Table
+	History vcs.History
 }

@@ -33,4 +33,8 @@ func main() {
 	}
 	defer joinerOp.CloseAll()
 
+	if err = extractor_cli_settings.Run(joinerOp, l); err != nil {
+		l.Fatal(err)
+	}
+
 }

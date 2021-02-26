@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pavlo67/common/common/errors"
+
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/selectors"
 
@@ -24,7 +26,7 @@ func New() (transform.Operator, error) {
 }
 
 func (transformOp *transformStructureTable) Reset() error {
-	transformOp.data.Fields, transformOp.data.Table = nil, nil
+	transformOp.data.Title, transformOp.data.Fields, transformOp.data.Table = "", nil, nil
 	return nil
 }
 
@@ -37,12 +39,25 @@ func (transformOp *transformStructureTable) Stat(params common.Map) error {
 const onIn = "on transformStructureTable.In(): "
 
 func (transformOp *transformStructureTable) In(selector *selectors.Term, data interface{}) error {
+	if err := transformOp.Reset(); err != nil {
+		return errors.CommonError(err, onIn)
+	}
+
 	var tablePtr *transform.Table
 
-	if table, _ := data.(transform.Table); table != nil {
-		tablePtr = &table
-	} else if table, _ := data.(*transform.Table); table != nil {
-		tablePtr = table
+	switch v := data.(type) {
+	case transform.Table:
+		tablePtr = &v
+	case *transform.Table:
+		tablePtr = v
+	case transform.Structure:
+		tablePtr = &v.Table
+		transformOp.data.Title = v.Title
+	case *transform.Structure:
+		if v != nil {
+			tablePtr = &v.Table
+			transformOp.data.Title = v.Title
+		}
 	}
 
 	if tablePtr == nil || len(*tablePtr) < 1 {

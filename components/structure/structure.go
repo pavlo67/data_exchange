@@ -1,6 +1,8 @@
-package transform
+package structure
 
-import "github.com/pavlo67/data_exchange/components/vcs"
+import (
+	"github.com/pavlo67/data_exchange/components/vcs"
+)
 
 type Field struct {
 	Name   string

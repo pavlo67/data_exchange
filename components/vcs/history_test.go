@@ -37,7 +37,7 @@ func TestHistoryCheckOn(t *testing.T) {
 		DoneAt: time0,
 		//Related: &joiner.Link{
 		//	InterfaceKey: interfaceKey0,
-		//	ID:           "123",
+		//	Fragment:           "123",
 		//},
 	})
 
@@ -47,7 +47,7 @@ func TestHistoryCheckOn(t *testing.T) {
 		DoneAt: time.Now(),
 		//Related: &joiner.Link{
 		//	InterfaceKey: interfaceKey0,
-		//	ID:           "123",
+		//	Fragment:           "123",
 		//},
 	})
 
@@ -60,7 +60,7 @@ func TestHistoryCheckOn(t *testing.T) {
 		DoneAt: time0,
 		//Related: &joiner.Link{
 		//	InterfaceKey: interfaceKey0,
-		//	ID:           "123",
+		//	Fragment:           "123",
 		//},
 	})
 
@@ -73,7 +73,7 @@ func TestHistoryCheckOn(t *testing.T) {
 		DoneAt: time0,
 		//Related: &joiner.Link{
 		//	InterfaceKey: interfaceKey0,
-		//	ID:           "123",
+		//	Fragment:           "123",
 		//},
 	})
 
@@ -86,7 +86,7 @@ func TestHistoryCheckOn(t *testing.T) {
 		DoneAt: time.Now(),
 		//Related: &joiner.Link{
 		//	InterfaceKey: interfaceKey0,
-		//	ID:           "123",
+		//	Fragment:           "123",
 		//},
 	})
 

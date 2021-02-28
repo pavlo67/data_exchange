@@ -1,3 +1,38 @@
+# URN
+
+<https://www.ietf.org/rfc/rfc2141.txt>
+
+All URNs have the following syntax (phrases enclosed in quotes are REQUIRED):
+<URN> ::= "urn:" <NID> ":" <NSS>
+where <NID> is the Namespace Identifier, and <NSS> is the Namespace Specific String.  The leading "urn:" sequence
+is case-insensitive. The Namespace ID determines the _syntactic_ interpretation of the Namespace Specific String
+
+The following URN comparisons highlight the lexical equivalence definitions:
+
+    URN:foo:a123,456
+    urn:foo:a123,456
+    urn:FOO:a123,456
+    urn:foo:A123,456
+    urn:foo:a123%2C456
+    URN:FOO:a123%2c456
+
+## Golang implementation
+
+<https://github.com/voicera/gooseberry/urn>
+
+    type URN struct {
+        // contains unexported fields
+    }
+
+    func NewURN(namespaceID string, namespaceSpecificString string) *URN
+    func TryParseString(urn string) (*URN, bool)
+    func (urn *URN) GetNamespaceID() string
+    func (urn *URN) GetNamespaceSpecificString() string
+    func (urn *URN) MarshalJSON() ([]byte, error)
+    func (urn *URN) String() string
+    func (urn *URN) UnmarshalJSON(b []byte) error
+
+
 # URI, URL 
 
 <https://www.ietf.org/rfc/rfc3986.txt>     
@@ -33,38 +68,4 @@ Examples:
         Fragment    string    // fragment for references, without '#'
         RawFragment string    // encoded fragment hint (see EscapedFragment method)
     }
-
-# URN
-
-<https://www.ietf.org/rfc/rfc2141.txt>
-
-All URNs have the following syntax (phrases enclosed in quotes are REQUIRED): 
-<URN> ::= "urn:" <NID> ":" <NSS>
-where <NID> is the Namespace Identifier, and <NSS> is the Namespace Specific String.  The leading "urn:" sequence
-is case-insensitive. The Namespace ID determines the _syntactic_ interpretation of the Namespace Specific String
-
-The following URN comparisons highlight the lexical equivalence definitions:
-
-    URN:foo:a123,456
-    urn:foo:a123,456
-    urn:FOO:a123,456
-    urn:foo:A123,456
-    urn:foo:a123%2C456
-    URN:FOO:a123%2c456
-
-## Golang implementation (url.URL)
-
-<https://github.com/voicera/gooseberry/urn>
-
-    type URN struct {
-        // contains unexported fields
-    }
-
-    func NewURN(namespaceID string, namespaceSpecificString string) *URN
-    func TryParseString(urn string) (*URN, bool)
-    func (urn *URN) GetNamespaceID() string
-    func (urn *URN) GetNamespaceSpecificString() string
-    func (urn *URN) MarshalJSON() ([]byte, error)
-    func (urn *URN) String() string
-    func (urn *URN) UnmarshalJSON(b []byte) error
 

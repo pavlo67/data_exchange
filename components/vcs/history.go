@@ -16,7 +16,7 @@ const CreatedAction ActionKey = "created"
 const UpdatedAction ActionKey = "updated"
 
 type Action struct {
-	Actor  ns.ID     `bson:",omitempty" json:",omitempty"`
+	Actor  ns.NSS    `bson:",omitempty" json:",omitempty"`
 	Key    ActionKey `bson:",omitempty" json:",omitempty"`
 	DoneAt time.Time `bson:",omitempty" json:",omitempty"`
 	Error  error     `bson:",omitempty" json:",omitempty"`

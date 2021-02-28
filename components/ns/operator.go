@@ -19,7 +19,7 @@ func (item *Item) IsValid() bool {
 		strlib.ReSpaces.ReplaceAllString(item.Fragment, "") != ""
 }
 
-func (item *Item) ID() ID {
+func (item *Item) ID() NSS {
 	if item == nil {
 		return ""
 	}
@@ -29,13 +29,13 @@ func (item *Item) ID() ID {
 	id := strlib.ReSpaces.ReplaceAllString(item.Fragment, "")
 
 	if len(id) > 0 {
-		return ID(host + PathDelim + path + IDDelim + id)
+		return NSS(host + PathDelim + path + IDDelim + id)
 	} else if len(path) > 0 {
-		return ID(host + PathDelim + path)
+		return NSS(host + PathDelim + path)
 	} else if len(host) > 0 {
-		return ID(host)
+		return NSS(host)
 	} else {
-		return ID("")
+		return NSS("")
 	}
 }
 

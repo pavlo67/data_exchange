@@ -14,9 +14,9 @@ func TestHistoryCheckOn(t *testing.T) {
 
 	// interfaceKey0 := joiner.InterfaceKey("0")
 
-	actorKey0 := ns.ID("0")
+	actorKey0 := ns.NSS("0")
 
-	actorKey1 := ns.ID("1")
+	actorKey1 := ns.NSS("1")
 
 	hOld := History{
 		{

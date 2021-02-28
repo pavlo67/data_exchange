@@ -3,11 +3,25 @@ package types01
 import (
 	"time"
 
+	"github.com/pavlo67/common/common"
+	"github.com/pavlo67/common/common/rbac"
+
 	"github.com/pavlo67/data_exchange/components/ns"
 	"github.com/pavlo67/data_exchange/components/vcs"
 )
 
-// general table -------------------------------------------------------
+// persons -------------------------------------------------------------
+
+type Person struct {
+	NSS       ns.NSS      // TODO: ba careful, NSS can't be empty
+	Nickname  string      `json:",omitempty" bson:",omitempty"`
+	Roles     rbac.Roles  `json:",omitempty" bson:",omitempty"`
+	Creds     common.Map  `json:",omitempty" bson:",omitempty"`
+	Data      common.Map  `json:",omitempty" bson:",omitempty"`
+	History   vcs.History `json:",omitempty" bson:",omitempty"`
+	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`
+	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
+}
 
 // records -------------------------------------------------------------
 
@@ -21,27 +35,11 @@ type Content struct {
 }
 
 type Record struct {
-	IssuedID  ns.ID       // TODO: ba careful, IssuedID can't be empty
-	OwnerID   ns.ID       `json:",omitempty" bson:",omitempty"`
-	ViewerID  ns.ID       `json:",omitempty" bson:",omitempty"`
+	NSS       ns.NSS      // TODO: ba careful, NSS can't be empty
+	OwnerNSS  ns.NSS      `json:",omitempty" bson:",omitempty"`
+	ViewerNSS ns.NSS      `json:",omitempty" bson:",omitempty"`
 	Content   Content     `json:",inline"    bson:",inline"`
 	History   vcs.History `json:",omitempty" bson:",omitempty"`
 	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`
 	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
 }
-
-type RecordsPack struct {
-	Title     string
-	Items     []Record
-	History   vcs.History
-	CreatedAt time.Time
-}
-
-//func (ris *RecordsPack) In(data []byte, path string) (filenames []string, err error) {
-//	return nil, json.Unmarshal(data, ris)
-//}
-//
-//func (ris RecordsPack) Out(path string) (data []byte, filenames []string, err error) {
-//	jsonBytes, err := json.Marshal(ris)
-//	return jsonBytes, nil, err
-//}

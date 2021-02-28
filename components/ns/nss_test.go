@@ -8,8 +8,8 @@ import (
 )
 
 type TestCase struct {
-	ID           ID
-	IDExpected   ID
+	ID           NSS
+	IDExpected   NSS
 	PathExpected string
 	IsNull       bool
 }

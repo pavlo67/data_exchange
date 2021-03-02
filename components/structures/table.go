@@ -35,6 +35,7 @@ func (table *Table) Stat() (*TableStat, error) {
 	tableStat.RowsStat.Errored = len(table.ErrorsMap) // TODO??? check non empty pack.ErrorsMap values only
 
 	tableStat.FieldsStat = map[string]ItemsStat{}
+	tableStat.ColumnsStat = map[string]ItemsStat{}
 	// tableStat.RowsValuesStat.MinNonEmptyIndex = -1
 
 	for _, row := range table.Rows {

@@ -15,7 +15,7 @@ func (itemsStat *ItemsStat) String() string {
 	if itemsStat == nil {
 		return "nil"
 	}
-	return fmt.Sprintf("Total:%d, NonEmpty:%d, Errored:%d", itemsStat.Total, itemsStat.NonEmpty, itemsStat.Errored)
+	return fmt.Sprintf("Total:%4d, NonEmpty:%4d, Errored:%4d", itemsStat.Total, itemsStat.NonEmpty, itemsStat.Errored)
 
 	//bytes, _ := json.Marshal(itemsStat)
 	//return string(bytes)
@@ -30,10 +30,10 @@ func (fieldsStat *FieldsStat) String() string {
 
 	var fieldsStatStr []string
 	for f, s := range *fieldsStat {
-		fieldsStatStr = append(fieldsStatStr, `"`+f+`":{`+s.String()+"}")
+		fieldsStatStr = append(fieldsStatStr, `"`+f+`": {`+s.String()+"}")
 	}
 
-	return strings.Join(fieldsStatStr, ", ")
+	return "\n    " + strings.Join(fieldsStatStr, "\n    ")
 }
 
 //type ValuesStat struct {
@@ -64,7 +64,7 @@ func (packStat *PackStat) String() string {
 		return "nil"
 	}
 	return fmt.Sprintf(
-		"\nItemsStat:  %s\nFieldsStat: %s\nErrorsStat: %s",
+		"\n  ItemsStat:\n    %s\n  FieldsStat: %s\n  ErrorsStat:\n    %s",
 		packStat.ItemsStat.String(),
 		packStat.FieldsStat.String(),
 		packStat.ErrorsStat.String(),
@@ -84,7 +84,7 @@ func (errorsStat *ErrorsStat) String() string {
 	//bytes, _ := json.Marshal(errorsStat)
 	//return string(bytes)
 
-	return fmt.Sprintf("Total:%d, Distinct:%d, Fields:%v", errorsStat.Total, errorsStat.Distinct, errorsStat.Fields)
+	return fmt.Sprintf("Total:%d, Distinct:%d, Fields: %v", errorsStat.Total, errorsStat.Distinct, errorsStat.Fields)
 
 }
 
@@ -101,7 +101,7 @@ func (tableStat *TableStat) String() string {
 		return "nil"
 	}
 	return fmt.Sprintf(
-		"\nRowsStat:    %s\nFieldsStat:  %s\nColumnsStat: %s\nErrorsStat:  %s", // RowsValuesStat: %s
+		"\n  RowsStat:\n    %s\n  FieldsStat:%s\n  ColumnsStat:%s\n  ErrorsStat:\n    %s", // RowsValuesStat: %s
 		tableStat.RowsStat.String(),
 		// tableStat.RowsValuesStat.String(),
 		tableStat.FieldsStat.String(),

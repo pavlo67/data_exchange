@@ -1,6 +1,7 @@
 package structures
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/pavlo67/data_exchange/components/vcs"
@@ -34,49 +35,54 @@ func (table *Table) Stat() (*TableStat, error) {
 	tableStat.RowsStat.Errored = len(table.ErrorsMap) // TODO??? check non empty pack.ErrorsMap values only
 
 	tableStat.FieldsStat = map[string]ItemsStat{}
-	tableStat.RowsValuesStat.MinNonEmptyIndex = -1
+	// tableStat.RowsValuesStat.MinNonEmptyIndex = -1
 
 	for _, row := range table.Rows {
 		if len(row) > 0 {
 			tableStat.RowsStat.NonEmpty++
-			nonEmptyAmount := 0
-			nonEmptyIndexMin := -1
-			nonEmptyIndexMax := -1
+			//nonEmptyAmount := 0
+			//nonEmptyIndexMin := -1
+			//nonEmptyIndexMax := -1
 			for j, v := range row {
 				var fieldName string
 				if j < len(table.Fields) {
 					fieldName = table.Fields[j].Name
 				}
-
 				fieldStat := tableStat.FieldsStat[fieldName]
-				fieldStat.Total++
 
+				columnName := strconv.Itoa(j)
+				columnStat := tableStat.ColumnsStat[columnName]
+
+				fieldStat.Total++
+				columnStat.Total++
 				if v != "" {
 					fieldStat.NonEmpty++
-					nonEmptyAmount++
-					nonEmptyIndexMax = j
-					if nonEmptyIndexMin < 0 {
-						nonEmptyIndexMin = j
-					}
+					columnStat.NonEmpty++
+					//nonEmptyAmount++
+					//nonEmptyIndexMax = j
+					//if nonEmptyIndexMin < 0 {
+					//	nonEmptyIndexMin = j
+					//}
 				}
 
 				tableStat.FieldsStat[fieldName] = fieldStat
+				tableStat.ColumnsStat[columnName] = columnStat
 			}
 
-			if nonEmptyAmount > 0 {
-				if tableStat.RowsValuesStat.MinNonEmptyAmount == 0 || nonEmptyAmount < tableStat.RowsValuesStat.MinNonEmptyAmount {
-					tableStat.RowsValuesStat.MinNonEmptyAmount = nonEmptyAmount
-				}
-				if nonEmptyAmount > tableStat.RowsValuesStat.MaxNonEmptyAmount {
-					tableStat.RowsValuesStat.MaxNonEmptyAmount = nonEmptyAmount
-				}
-				if tableStat.RowsValuesStat.MinNonEmptyIndex == -1 || nonEmptyIndexMin < tableStat.RowsValuesStat.MinNonEmptyIndex {
-					tableStat.RowsValuesStat.MinNonEmptyIndex = nonEmptyIndexMin
-				}
-				if nonEmptyIndexMax > tableStat.RowsValuesStat.MaxNonEmptyIndex {
-					tableStat.RowsValuesStat.MaxNonEmptyIndex = nonEmptyIndexMax
-				}
-			}
+			//if nonEmptyAmount > 0 {
+			//	if tableStat.RowsValuesStat.MinNonEmptyAmount == 0 || nonEmptyAmount < tableStat.RowsValuesStat.MinNonEmptyAmount {
+			//		tableStat.RowsValuesStat.MinNonEmptyAmount = nonEmptyAmount
+			//	}
+			//	if nonEmptyAmount > tableStat.RowsValuesStat.MaxNonEmptyAmount {
+			//		tableStat.RowsValuesStat.MaxNonEmptyAmount = nonEmptyAmount
+			//	}
+			//	if tableStat.RowsValuesStat.MinNonEmptyIndex == -1 || nonEmptyIndexMin < tableStat.RowsValuesStat.MinNonEmptyIndex {
+			//		tableStat.RowsValuesStat.MinNonEmptyIndex = nonEmptyIndexMin
+			//	}
+			//	if nonEmptyIndexMax > tableStat.RowsValuesStat.MaxNonEmptyIndex {
+			//		tableStat.RowsValuesStat.MaxNonEmptyIndex = nonEmptyIndexMax
+			//	}
+			//}
 		}
 	}
 

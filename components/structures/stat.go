@@ -36,23 +36,22 @@ func (fieldsStat *FieldsStat) String() string {
 	return strings.Join(fieldsStatStr, ", ")
 }
 
-type ValuesStat struct {
-	MinNonEmptyAmount int
-	MaxNonEmptyAmount int
-	MinNonEmptyIndex  int
-	MaxNonEmptyIndex  int
-}
-
-func (valuesStat *ValuesStat) String() string {
-	if valuesStat == nil {
-		return "nil"
-	}
-	//bytes, _ := json.Marshal(valuesStat)
-	//return string(bytes)
-	return fmt.Sprintf("MinNonEmptyAmount:%d, MaxNonEmptyAmount:%d, MinNonEmptyIndex:%d, MaxNonEmptyIndex:%d",
-		valuesStat.MinNonEmptyAmount, valuesStat.MaxNonEmptyAmount, valuesStat.MinNonEmptyIndex, valuesStat.MaxNonEmptyIndex)
-
-}
+//type ValuesStat struct {
+//	MinNonEmptyAmount int
+//	MaxNonEmptyAmount int
+//	MinNonEmptyIndex  int
+//	MaxNonEmptyIndex  int
+//}
+//
+//func (valuesStat *ValuesStat) String() string {
+//	if valuesStat == nil {
+//		return "nil"
+//	}
+//	//bytes, _ := json.Marshal(valuesStat)
+//	//return string(bytes)
+//	return fmt.Sprintf("MinNonEmptyAmount:%d, MaxNonEmptyAmount:%d, MinNonEmptyIndex:%d, MaxNonEmptyIndex:%d",
+//		valuesStat.MinNonEmptyAmount, valuesStat.MaxNonEmptyAmount, valuesStat.MinNonEmptyIndex, valuesStat.MaxNonEmptyIndex)
+//}
 
 type PackStat struct {
 	ItemsStat
@@ -90,9 +89,10 @@ func (errorsStat *ErrorsStat) String() string {
 }
 
 type TableStat struct {
-	RowsStat       ItemsStat
-	RowsValuesStat ValuesStat
+	RowsStat ItemsStat
+	// RowsValuesStat ValuesStat
 	FieldsStat
+	ColumnsStat FieldsStat
 	ErrorsStat
 }
 
@@ -101,10 +101,11 @@ func (tableStat *TableStat) String() string {
 		return "nil"
 	}
 	return fmt.Sprintf(
-		"\nRowsStat:       %s\nRowsValuesStat: %s\nFieldsStat:     %s\nErrorsStat:     %s",
+		"\nRowsStat:    %s\nFieldsStat:  %s\nColumnsStat: %s\nErrorsStat:  %s", // RowsValuesStat: %s
 		tableStat.RowsStat.String(),
-		tableStat.RowsValuesStat.String(),
+		// tableStat.RowsValuesStat.String(),
 		tableStat.FieldsStat.String(),
+		tableStat.ColumnsStat.String(),
 		tableStat.ErrorsStat.String(),
 	)
 }

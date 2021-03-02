@@ -6,10 +6,12 @@ import (
 	"github.com/pavlo67/data_exchange/components/vcs"
 )
 
+type Rows [][]string
+
 type Table struct {
 	Title     string      `json:",omitempty" bson:",omitempty"`
 	Fields    Fields      `json:",omitempty" bson:",omitempty"`
-	Rows      [][]string  `json:",omitempty" bson:",omitempty"`
+	Rows      Rows        `json:",omitempty" bson:",omitempty"`
 	ErrorsMap ErrorsMap   `json:",omitempty" bson:",omitempty"`
 	History   vcs.History `json:",omitempty" bson:",omitempty"`
 	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`

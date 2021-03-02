@@ -4,12 +4,6 @@ import "github.com/pavlo67/common/common/errors"
 
 type ErrorsMap map[int]map[string]errors.Error
 
-type ErrorsStat struct {
-	Total    int
-	Distinct int
-	Fields   map[string]int
-}
-
 func (errorsMap ErrorsMap) Stat() ErrorsStat {
 	var errorsStat ErrorsStat
 

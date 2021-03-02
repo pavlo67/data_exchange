@@ -1,6 +1,39 @@
 package structures
 
-import "testing"
+import (
+	"testing"
+	"time"
+
+	"github.com/pavlo67/common/common/errors"
+
+	"github.com/stretchr/testify/require"
+)
+
+func TestTableStat(t *testing.T) {
+	table := Table{
+		Title: "abc",
+		Fields: []Field{
+			{Name: "f1", Type: "t1", Format: "ff1", Tags: []string{"a", "b"}},
+			{Name: "f2", Type: "t2", Format: "ff2", Tags: []string{"a", "b"}},
+		},
+		Rows: Rows{
+			{"a", "b", "c", "d", "e"},
+			{"a", "b", "c", "d", "e", "f"},
+			{},
+			{},
+			{"1"},
+		},
+		ErrorsMap: ErrorsMap{2: map[string]errors.Error{"f2": errors.CommonError("1", "2")}},
+		CreatedAt: time.Now(),
+	}
+
+	tableStat, err := table.Stat()
+	require.NoError(t, err)
+	require.NotNil(t, tableStat)
+
+	t.Logf("%s", tableStat.String())
+
+}
 
 func TestTableStat_String(t *testing.T) {
 	tableStat := TableStat{
@@ -16,37 +49,58 @@ func TestTableStat_String(t *testing.T) {
 		//	MaxNonEmptyIndex:  6,
 		//},
 		FieldsStat: FieldsStat{
-			"aaa": ItemsStat{
-				Total:    10,
-				NonEmpty: 3,
-				Errored:  3,
+			{
+				Name: "aaa",
+				ItemsStat: ItemsStat{
+					Total:    10,
+					NonEmpty: 3,
+					Errored:  3,
+				},
 			},
-			"bbb": ItemsStat{
-				Total:    20,
-				NonEmpty: 10,
-				Errored:  10,
+			{
+				Name: "bbb",
+				ItemsStat: ItemsStat{
+					Total:    20,
+					NonEmpty: 10,
+					Errored:  10,
+				},
 			},
-			"ccc": ItemsStat{
-				Total:    20,
-				NonEmpty: 10,
-				Errored:  10,
+
+			{
+				Name: "ccc",
+				ItemsStat: ItemsStat{
+					Total:    20,
+					NonEmpty: 10,
+					Errored:  10,
+				},
 			},
 		},
 		ColumnsStat: FieldsStat{
-			"1": ItemsStat{
-				Total:    10,
-				NonEmpty: 3,
-				Errored:  3,
+			{
+				Name: "1",
+				ItemsStat: ItemsStat{
+					Total:    10,
+					NonEmpty: 3,
+					Errored:  3,
+				},
 			},
-			"2": ItemsStat{
-				Total:    20,
-				NonEmpty: 10,
-				Errored:  10,
+
+			{
+				Name: "2",
+				ItemsStat: ItemsStat{
+					Total:    20,
+					NonEmpty: 10,
+					Errored:  10,
+				},
 			},
-			"3": ItemsStat{
-				Total:    20,
-				NonEmpty: 10,
-				Errored:  10,
+
+			{
+				Name: "3",
+				ItemsStat: ItemsStat{
+					Total:    20,
+					NonEmpty: 10,
+					Errored:  10,
+				},
 			},
 		},
 		ErrorsStat: ErrorsStat{
@@ -70,20 +124,30 @@ func TestPackStat_String(t *testing.T) {
 			Errored:  333,
 		},
 		FieldsStat: FieldsStat{
-			"aaa": ItemsStat{
-				Total:    10,
-				NonEmpty: 3,
-				Errored:  3,
+			{
+				Name: "aaa",
+				ItemsStat: ItemsStat{
+					Total:    10,
+					NonEmpty: 3,
+					Errored:  3,
+				},
 			},
-			"bbb": ItemsStat{
-				Total:    20,
-				NonEmpty: 10,
-				Errored:  10,
+			{
+				Name: "bbb",
+				ItemsStat: ItemsStat{
+					Total:    20,
+					NonEmpty: 10,
+					Errored:  10,
+				},
 			},
-			"ccc": ItemsStat{
-				Total:    20,
-				NonEmpty: 10,
-				Errored:  10,
+
+			{
+				Name: "ccc",
+				ItemsStat: ItemsStat{
+					Total:    20,
+					NonEmpty: 10,
+					Errored:  10,
+				},
 			},
 		},
 		ErrorsStat: ErrorsStat{

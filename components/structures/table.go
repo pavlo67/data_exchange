@@ -1,7 +1,7 @@
 package structures
 
 import (
-	"strconv"
+	"fmt"
 	"time"
 
 	"github.com/pavlo67/data_exchange/components/vcs"
@@ -20,80 +20,52 @@ type Table struct {
 }
 
 func (table *Table) Stat() (*TableStat, error) {
-
 	if table == nil {
 		return nil, nil
 	}
-
-	//fieldsIndex, err := table.Fields.Index()
-	//if err != nil {
-	//	return nil, err
-	//}
 
 	var tableStat TableStat
 	tableStat.RowsStat.Total = len(table.Rows)
 	tableStat.RowsStat.Errored = len(table.ErrorsMap) // TODO??? check non empty pack.ErrorsMap values only
 
-	tableStat.FieldsStat = map[string]ItemsStat{}
-	tableStat.ColumnsStat = map[string]ItemsStat{}
-	// tableStat.RowsValuesStat.MinNonEmptyIndex = -1
+	tableStat.FieldsStat = make(FieldsStat, len(table.Fields)+1)
+	tableStat.ColumnsStat = FieldsStat{}
 
 	for _, row := range table.Rows {
 		if len(row) > 0 {
 			tableStat.RowsStat.NonEmpty++
-			//nonEmptyAmount := 0
-			//nonEmptyIndexMin := -1
-			//nonEmptyIndexMax := -1
 			for j, v := range row {
-				var fieldName string
-				if j < len(table.Fields) {
-					fieldName = table.Fields[j].Name
+				fieldIndex := j
+				if j >= len(table.Fields) {
+					fieldIndex = len(table.Fields)
 				}
-				fieldStat := tableStat.FieldsStat[fieldName]
+				for j >= len(tableStat.ColumnsStat) {
+					tableStat.ColumnsStat = append(tableStat.ColumnsStat, FieldStat{})
+				}
 
-				columnName := strconv.Itoa(j)
-				columnStat := tableStat.ColumnsStat[columnName]
+				tableStat.FieldsStat[fieldIndex].Total++
+				tableStat.ColumnsStat[j].Total++
 
-				fieldStat.Total++
-				columnStat.Total++
 				if v != "" {
-					fieldStat.NonEmpty++
-					columnStat.NonEmpty++
-					//nonEmptyAmount++
-					//nonEmptyIndexMax = j
-					//if nonEmptyIndexMin < 0 {
-					//	nonEmptyIndexMin = j
-					//}
+					tableStat.FieldsStat[fieldIndex].NonEmpty++
+					tableStat.ColumnsStat[j].NonEmpty++
 				}
-
-				tableStat.FieldsStat[fieldName] = fieldStat
-				tableStat.ColumnsStat[columnName] = columnStat
 			}
-
-			//if nonEmptyAmount > 0 {
-			//	if tableStat.RowsValuesStat.MinNonEmptyAmount == 0 || nonEmptyAmount < tableStat.RowsValuesStat.MinNonEmptyAmount {
-			//		tableStat.RowsValuesStat.MinNonEmptyAmount = nonEmptyAmount
-			//	}
-			//	if nonEmptyAmount > tableStat.RowsValuesStat.MaxNonEmptyAmount {
-			//		tableStat.RowsValuesStat.MaxNonEmptyAmount = nonEmptyAmount
-			//	}
-			//	if tableStat.RowsValuesStat.MinNonEmptyIndex == -1 || nonEmptyIndexMin < tableStat.RowsValuesStat.MinNonEmptyIndex {
-			//		tableStat.RowsValuesStat.MinNonEmptyIndex = nonEmptyIndexMin
-			//	}
-			//	if nonEmptyIndexMax > tableStat.RowsValuesStat.MaxNonEmptyIndex {
-			//		tableStat.RowsValuesStat.MaxNonEmptyIndex = nonEmptyIndexMax
-			//	}
-			//}
 		}
+	}
+
+	for j, field := range table.Fields {
+		tableStat.FieldsStat[j].Name = field.Name
+	}
+	for j := range tableStat.ColumnsStat {
+		tableStat.ColumnsStat[j].Name = fmt.Sprintf("%02d", j)
 	}
 
 	tableStat.ErrorsStat = table.ErrorsMap.Stat()
 
-	for _, f := range table.Fields {
+	for j, f := range table.Fields {
 		if tableStat.ErrorsStat.Fields[f.Name] > 0 {
-			fieldStat := tableStat.FieldsStat[f.Name]
-			fieldStat.Errored = tableStat.ErrorsStat.Fields[f.Name]
-			tableStat.FieldsStat[f.Name] = fieldStat
+			tableStat.FieldsStat[j].Errored = tableStat.ErrorsStat.Fields[f.Name]
 		}
 	}
 

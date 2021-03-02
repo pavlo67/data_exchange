@@ -21,7 +21,12 @@ func (itemsStat *ItemsStat) String() string {
 	//return string(bytes)
 }
 
-type FieldsStat map[string]ItemsStat
+type FieldStat struct {
+	Name string
+	ItemsStat
+}
+
+type FieldsStat []FieldStat
 
 func (fieldsStat *FieldsStat) String() string {
 	if fieldsStat == nil {
@@ -29,29 +34,13 @@ func (fieldsStat *FieldsStat) String() string {
 	}
 
 	var fieldsStatStr []string
-	for f, s := range *fieldsStat {
-		fieldsStatStr = append(fieldsStatStr, `"`+f+`": {`+s.String()+"}")
+
+	for _, f := range *fieldsStat {
+		fieldsStatStr = append(fieldsStatStr, fmt.Sprintf("%-10s: %s", `"`+f.Name+`"`, f.ItemsStat.String()))
 	}
 
 	return "\n    " + strings.Join(fieldsStatStr, "\n    ")
 }
-
-//type ValuesStat struct {
-//	MinNonEmptyAmount int
-//	MaxNonEmptyAmount int
-//	MinNonEmptyIndex  int
-//	MaxNonEmptyIndex  int
-//}
-//
-//func (valuesStat *ValuesStat) String() string {
-//	if valuesStat == nil {
-//		return "nil"
-//	}
-//	//bytes, _ := json.Marshal(valuesStat)
-//	//return string(bytes)
-//	return fmt.Sprintf("MinNonEmptyAmount:%d, MaxNonEmptyAmount:%d, MinNonEmptyIndex:%d, MaxNonEmptyIndex:%d",
-//		valuesStat.MinNonEmptyAmount, valuesStat.MaxNonEmptyAmount, valuesStat.MinNonEmptyIndex, valuesStat.MaxNonEmptyIndex)
-//}
 
 type PackStat struct {
 	ItemsStat
@@ -64,7 +53,7 @@ func (packStat *PackStat) String() string {
 		return "nil"
 	}
 	return fmt.Sprintf(
-		"\n  ItemsStat:\n    %s\n  FieldsStat: %s\n  ErrorsStat:\n    %s",
+		"\n  ItemsStat:\n                %s\n  FieldsStat: %s\n  ErrorsStat:\n                %s",
 		packStat.ItemsStat.String(),
 		packStat.FieldsStat.String(),
 		packStat.ErrorsStat.String(),
@@ -84,7 +73,7 @@ func (errorsStat *ErrorsStat) String() string {
 	//bytes, _ := json.Marshal(errorsStat)
 	//return string(bytes)
 
-	return fmt.Sprintf("Total:%d, Distinct:%d, Fields: %v", errorsStat.Total, errorsStat.Distinct, errorsStat.Fields)
+	return fmt.Sprintf("Total:%4d, Distinct:%4d, Fields: %v", errorsStat.Total, errorsStat.Distinct, errorsStat.Fields)
 
 }
 
@@ -101,7 +90,7 @@ func (tableStat *TableStat) String() string {
 		return "nil"
 	}
 	return fmt.Sprintf(
-		"\n  RowsStat:\n    %s\n  FieldsStat:%s\n  ColumnsStat:%s\n  ErrorsStat:\n    %s", // RowsValuesStat: %s
+		"\n  RowsStat:\n                %s\n  FieldsStat:%s\n  ColumnsStat:%s\n  ErrorsStat:\n                %s",
 		tableStat.RowsStat.String(),
 		// tableStat.RowsValuesStat.String(),
 		tableStat.FieldsStat.String(),

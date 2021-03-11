@@ -4,7 +4,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/pavlo67/data_exchange/common"
+	"github.com/pavlo67/common/common"
+
 	"github.com/pavlo67/data_exchange/components/vcs"
 )
 

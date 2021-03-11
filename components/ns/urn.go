@@ -12,13 +12,13 @@ import (
 type URN common.IDStr
 
 // DEPRECATED
-// type NSS = URN
+// type URN = URN
 
-//type NSS common.IDStr
+//type URN common.IDStr
 
 // https://www.ietf.org/rfc/rfc2141.txt
 //
-// <NSS>         ::= 1*<URN chars>
+// <URN>         ::= 1*<URN chars>
 // <URN chars>   ::= <trans> | "%" <hex> <hex>
 // <trans>       ::= <upper> | <lower> | <number> | <other> | <reserved>
 // <hex>         ::= <number> | "A" | "B" | "C" | "D" | "E" | "F" |
@@ -28,7 +28,7 @@ type URN common.IDStr
 // "_" | "!" | "*" | "'"
 //
 // Depending on the rules governing a namespace, valid identifiers in a namespace might contain characters that are not members
-// of the URN character set above (<URN chars>).  Such strings MUST be translated into canonical NSS format before using them
+// of the URN character set above (<URN chars>).  Such strings MUST be translated into canonical URN format before using them
 // as protocol elements or otherwise passing them on to other applications. Translation is done by encoding each character
 // outside the URN character set as a sequence of one to six octets using UTF-8 encoding [5], and the encoding of each of those
 //  octets as "%" followed by two characters from the <hex> character set above. The two characters give the hexadecimal
@@ -55,8 +55,8 @@ var rePathDelimFirst = regexp.MustCompile(`^(` + PathDelim + `)+`)
 var rePathDelim = regexp.MustCompile(IDDelim + `.*`)
 var reIDDelimFirst = regexp.MustCompile(`^(` + IDDelim + `)+`)
 
-func (id URN) Item() *Item {
-	idStr := strings.TrimSpace(string(id))
+func (urn URN) Item() *Item {
+	idStr := strings.TrimSpace(string(urn))
 	if len(idStr) < 1 {
 		return nil
 	}

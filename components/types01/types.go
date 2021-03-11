@@ -13,7 +13,7 @@ import (
 // persons -------------------------------------------------------------
 
 type Person struct {
-	NSS       ns.NSS      // TODO: ba careful, NSS can't be empty
+	NSS       ns.URN      // TODO: ba careful, NSS can't be empty
 	Nickname  string      `json:",omitempty" bson:",omitempty"`
 	Roles     rbac.Roles  `json:",omitempty" bson:",omitempty"`
 	Creds     common.Map  `json:",omitempty" bson:",omitempty"`
@@ -35,9 +35,9 @@ type Content struct {
 }
 
 type Record struct {
-	NSS       ns.NSS      // TODO: ba careful, NSS can't be empty
-	OwnerNSS  ns.NSS      `json:",omitempty" bson:",omitempty"`
-	ViewerNSS ns.NSS      `json:",omitempty" bson:",omitempty"`
+	NSS       ns.URN      // TODO: ba careful, NSS can't be empty
+	OwnerNSS  ns.URN      `json:",omitempty" bson:",omitempty"`
+	ViewerNSS ns.URN      `json:",omitempty" bson:",omitempty"`
 	Content   Content     `json:",inline"    bson:",inline"`
 	History   vcs.History `json:",omitempty" bson:",omitempty"`
 	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`

@@ -9,19 +9,19 @@ import (
 )
 
 type Pack struct {
-	Title      string      `json:",omitempty" bson:",omitempty"`
-	FieldsStat FieldsStat  `json:",omitempty" bson:",omitempty"`
-	Data       interface{} `json:",omitempty" bson:",omitempty"`
-	ErrorsMap  ErrorsMap   `json:",omitempty" bson:",omitempty"`
-	History    vcs.History `json:",omitempty" bson:",omitempty"`
-	CreatedAt  time.Time   `json:",omitempty" bson:",omitempty"`
-	UpdatedAt  *time.Time  `json:",omitempty" bson:",omitempty"`
+	Title     string      `json:",omitempty" bson:",omitempty"`
+	Fields    Fields      `json:",omitempty" bson:",omitempty"`
+	Data      interface{} `json:",omitempty" bson:",omitempty"`
+	ErrorsMap ErrorsMap   `json:",omitempty" bson:",omitempty"`
+	History   vcs.History `json:",omitempty" bson:",omitempty"`
+	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`
+	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
 }
 
 func (pack *Pack) Stat() PackStat {
 	var packStat PackStat
 
-	if pack == nil {
+	if pack == nil || pack.Data == nil {
 		return packStat
 	}
 
@@ -37,7 +37,7 @@ func (pack *Pack) Stat() PackStat {
 		}
 	}
 
-	packStat.FieldsStat = pack.FieldsStat
+	packStat.FieldsStat = pack.Fields.Stat()
 	packStat.ErrorsStat = pack.ErrorsMap.Stat()
 
 	return packStat

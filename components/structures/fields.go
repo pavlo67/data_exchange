@@ -3,10 +3,11 @@ package structures
 import "fmt"
 
 type Field struct {
-	Name   string   `json:",omitempty" bson:",omitempty"`
-	Type   string   `json:",omitempty" bson:",omitempty"`
-	Format string   `json:",omitempty" bson:",omitempty"`
-	Tags   []string `json:",omitempty" bson:",omitempty"`
+	Name   string    `json:",omitempty" bson:",omitempty"`
+	Type   string    `json:",omitempty" bson:",omitempty"`
+	Format string    `json:",omitempty" bson:",omitempty"`
+	Tags   []string  `json:",omitempty" bson:",omitempty"`
+	Stat   FieldStat `json:",omitempty" bson:",omitempty"`
 }
 
 type Fields []Field
@@ -22,4 +23,13 @@ func (fields Fields) Index() (map[string]int, error) {
 	}
 
 	return index, nil
+}
+
+func (fields Fields) Stat() FieldsStat {
+	fieldsStat := make(FieldsStat, len(fields))
+	for i, f := range fields {
+		fieldsStat[i] = f.Stat
+	}
+
+	return fieldsStat
 }

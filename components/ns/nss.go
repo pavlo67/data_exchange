@@ -9,7 +9,12 @@ import (
 
 // TODO!!! format URN according to RFC
 
-type NSS common.IDStr
+type URN common.IDStr
+
+// DEPRECATED
+// type NSS = URN
+
+//type NSS common.IDStr
 
 // https://www.ietf.org/rfc/rfc2141.txt
 //
@@ -50,7 +55,7 @@ var rePathDelimFirst = regexp.MustCompile(`^(` + PathDelim + `)+`)
 var rePathDelim = regexp.MustCompile(IDDelim + `.*`)
 var reIDDelimFirst = regexp.MustCompile(`^(` + IDDelim + `)+`)
 
-func (id NSS) Item() *Item {
+func (id URN) Item() *Item {
 	idStr := strings.TrimSpace(string(id))
 	if len(idStr) < 1 {
 		return nil

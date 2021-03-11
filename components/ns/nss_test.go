@@ -8,8 +8,8 @@ import (
 )
 
 type TestCase struct {
-	ID           NSS
-	IDExpected   NSS
+	URN          URN
+	URNExpected  URN
 	PathExpected string
 	IsNull       bool
 }
@@ -27,15 +27,15 @@ func TestIdentity(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		url := tc.ID.Item()
+		url := tc.URN.Item()
 
 		if tc.IsNull {
 			require.Nil(t, url)
 		} else {
 			require.NotNil(t, url)
-			log.Printf("%s --> %#v", tc.ID, url)
+			log.Printf("%s --> %#v", tc.URN, url)
 			require.Equal(t, tc.PathExpected, url.Path)
-			require.Equal(t, tc.IDExpected, url.ID())
+			require.Equal(t, tc.URNExpected, url.URN())
 		}
 	}
 }

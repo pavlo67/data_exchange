@@ -16,7 +16,7 @@ func TestTableStat(t *testing.T) {
 			{Name: "f1", Type: "t1", Format: "ff1", Tags: []string{"a", "b"}},
 			{Name: "f2", Type: "t2", Format: "ff2", Tags: []string{"a", "b"}},
 		},
-		Rows: Rows{
+		Data: Rows{
 			{"a", "b", "c", "d", "e"},
 			{"a", "b", "c", "d", "e", "f"},
 			{},

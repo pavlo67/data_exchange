@@ -19,7 +19,7 @@ func (item *Item) IsValid() bool {
 		strlib.ReSpaces.ReplaceAllString(item.Fragment, "") != ""
 }
 
-func (item *Item) ID() NSS {
+func (item *Item) URN() URN {
 	if item == nil {
 		return ""
 	}
@@ -29,18 +29,18 @@ func (item *Item) ID() NSS {
 	id := strlib.ReSpaces.ReplaceAllString(item.Fragment, "")
 
 	if len(id) > 0 {
-		return NSS(host + PathDelim + path + IDDelim + id)
+		return URN(host + PathDelim + path + IDDelim + id)
 	} else if len(path) > 0 {
-		return NSS(host + PathDelim + path)
+		return URN(host + PathDelim + path)
 	} else if len(host) > 0 {
-		return NSS(host)
+		return URN(host)
 	} else {
-		return NSS("")
+		return ""
 	}
 }
 
 func (item *Item) String() string {
-	return string(item.ID())
+	return string(item.URN())
 }
 
 //func FromURLRaw(urlRaw string) Item {

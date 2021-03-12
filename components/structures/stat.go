@@ -42,6 +42,8 @@ func (fieldsStat *FieldsStat) String() string {
 	return "\n    " + strings.Join(fieldsStatStr, "\n    ")
 }
 
+var _ fmt.Stringer = &PackStat{}
+
 type PackStat struct {
 	ItemsStat
 	FieldsStat

@@ -11,11 +11,6 @@ import (
 
 type URN common.IDStr
 
-// DEPRECATED
-// type URN = URN
-
-//type URN common.IDStr
-
 // https://www.ietf.org/rfc/rfc2141.txt
 //
 // <URN>         ::= 1*<URN chars>
@@ -46,28 +41,33 @@ type URN common.IDStr
 
 // -----------------------------------------------------------------------------------------------
 
-const PathDelim = `/`
+var reProto = regexp.MustCompile(`^.*?:`)
+var rePath = regexp.MustCompile(`/.*`)
+var reFragment = regexp.MustCompile(`#.*`)
+
 const IDDelim = `#`
 
-var reProto = regexp.MustCompile(`^https?://`)
-var reHostDelim = regexp.MustCompile(PathDelim + `.*`)
-var rePathDelimFirst = regexp.MustCompile(`^(` + PathDelim + `)+`)
-var rePathDelim = regexp.MustCompile(IDDelim + `.*`)
-var reIDDelimFirst = regexp.MustCompile(`^(` + IDDelim + `)+`)
-
 func (urn URN) Item() *Item {
-	idStr := strings.TrimSpace(string(urn))
-	if len(idStr) < 1 {
+	urnStr := strings.TrimSpace(string(urn))
+	if len(urnStr) < 1 {
 		return nil
 	}
 
-	host := reHostDelim.ReplaceAllString(idStr, "")
-	rest := rePathDelimFirst.ReplaceAllString(strings.TrimSpace(idStr[len(host):]), "")
+	withoutProto := reProto.ReplaceAllString(urnStr, "")
+	proto := urnStr[:len(urnStr)-len(withoutProto)]
 
-	path := rePathDelim.ReplaceAllString(rest, "")
-	fragment := reIDDelimFirst.ReplaceAllString(strings.TrimSpace(rest[len(path):]), "")
+	host := rePath.ReplaceAllString(withoutProto, "")
+	withoutHost := withoutProto[len(host):]
+
+	path := reFragment.ReplaceAllString(withoutHost, "")
+
+	var fragment string
+	if len(path) < len(withoutHost) {
+		fragment = withoutHost[len(path)+1:]
+	}
 
 	return &Item{
+		Proto:    proto,
 		Host:     host,
 		Path:     path,
 		Fragment: fragment,

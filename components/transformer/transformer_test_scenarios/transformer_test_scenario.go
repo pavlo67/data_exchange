@@ -10,7 +10,7 @@ import (
 	"github.com/pavlo67/data_exchange/components/transformer"
 )
 
-func TestOperator(t *testing.T, transformOp transformer.Operator, params common.Map, dataInitial interface{}, firstCheck bool) {
+func TestOperator(t *testing.T, transformOp transformer.Operator, params common.Map, dataInitial interface{}, firstCheck bool) (copyFinal, finalStat, finalOut interface{}) {
 
 	// import/stat initial data ----------------------------------------------------------
 
@@ -26,46 +26,51 @@ func TestOperator(t *testing.T, transformOp transformer.Operator, params common.
 
 	// data export/import and its comparison with initial one ----------------------------
 
-	dataCopy, err := transformOp.Out(nil, params)
+	dataRepeat, err := transformOp.Out(nil, params)
 	require.NoError(t, err)
-	require.NotNil(t, dataCopy)
+	require.NotNil(t, dataRepeat)
 
 	if firstCheck {
-		require.Equal(t, dataInitial, dataCopy)
+		require.Equal(t, dataInitial, dataRepeat)
 	}
 
 	err = transformOp.Reset()
 	require.NoError(t, err)
 
-	err = transformOp.In(nil, params, dataCopy)
+	err = transformOp.In(nil, params, dataRepeat)
 	require.NoError(t, err)
 
-	statCopy, err := transformOp.Stat(nil, params)
+	statRepeat, err := transformOp.Stat(nil, params)
 	require.NoError(t, err)
-	require.NotNil(t, statCopy)
+	require.NotNil(t, statRepeat)
 
 	if firstCheck {
-		require.Equal(t, statInitial, statCopy)
+		require.Equal(t, statInitial, statRepeat)
 	}
 
 	// data export/import repeat and its comparison with previous one --------------------
 
-	dataCopyRepeat, err := transformOp.Out(nil, params)
+	dataFinal, err := transformOp.Out(nil, params)
 	require.NoError(t, err)
-	require.NotNil(t, dataCopyRepeat)
+	require.NotNil(t, dataFinal)
 
-	require.Equal(t, dataCopy, dataCopyRepeat)
+	require.Equal(t, dataRepeat, dataFinal)
 
 	err = transformOp.Reset()
 	require.NoError(t, err)
 
-	err = transformOp.In(nil, params, dataCopyRepeat)
+	err = transformOp.In(nil, params, dataFinal)
 	require.NoError(t, err)
 
-	statCopyRepeat, err := transformOp.Stat(nil, params)
+	statFinal, err := transformOp.Stat(nil, params)
 	require.NoError(t, err)
-	require.NotNil(t, statCopyRepeat)
+	require.NotNil(t, statFinal)
 
-	require.Equal(t, statCopy, statCopyRepeat)
+	require.Equal(t, statRepeat, statFinal)
 
+	copyFinal, err = transformOp.Copy(nil, params)
+	require.NoError(t, err)
+	require.NotNil(t, copyFinal)
+
+	return copyFinal, statFinal, dataFinal
 }

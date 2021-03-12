@@ -1,6 +1,7 @@
 package transformer_table_csv
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -36,6 +37,16 @@ func TestTransformTableCSV(t *testing.T) {
 
 	dataInitial := "as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l"
 
-	transformer_test_scenarios.TestOperator(t, transformOp, params, dataInitial, true)
+	copyFinal, statFinal, dataFinal := transformer_test_scenarios.TestOperator(t, transformOp, params, dataInitial, true)
+
+	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)
+
+	t.Logf("DATA (OUT) FINAL: %#v", dataFinal)
+
+	if statFinalStringer, ok := statFinal.(fmt.Stringer); ok {
+		t.Logf("STAT (INTERNAL) FINAL: %s", statFinalStringer.String())
+	} else {
+		t.Logf("STAT (INTERNAL) FINAL: %#v", statFinal)
+	}
 
 }

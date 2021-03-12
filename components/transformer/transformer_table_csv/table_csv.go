@@ -87,16 +87,14 @@ func (transformOp *transformTableCSV) In(selector *selectors.Term, params common
 			return errors.CommonError("no table", onIn)
 		}
 		transformOp.table.History = vcs.History{{
-			Actor:  ns.URN(InterfaceKey),
+			Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
 			Key:    vcs.CreatedAction,
 			DoneAt: time.Now(),
 		}}
 		return nil
-
 	}
 
 	if path := params.StringDefault("path", ""); path != "" {
-
 		// TODO!!! unescape separators
 		_, transformOp.table, err = TableFile(path, separator)
 		if err != nil {
@@ -104,7 +102,7 @@ func (transformOp *transformTableCSV) In(selector *selectors.Term, params common
 		}
 		transformOp.table.Title = path
 		transformOp.table.History = vcs.History{{
-			Actor:  ns.URN(InterfaceKey),
+			Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
 			Key:    vcs.CreatedAction,
 			DoneAt: time.Now(),
 		}}

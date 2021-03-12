@@ -18,12 +18,13 @@ func TestIdentity(t *testing.T) {
 	testCases := []TestCase{
 		{"", "", "", true},
 		{"abc", "abc", "", false},
-		{"abc/", "abc", "", false},
-		{"/abc", "/abc", "abc", false},
-		{"dumaj.org.ua/abc/123#11", "dumaj.org.ua/abc/123#11", "abc/123", false},
-		{"dumaj.org.ua//123", "dumaj.org.ua/123", "123", false},
-		{"dumaj.org.ua/a/b/c/d/123", "dumaj.org.ua/a/b/c/d/123", "a/b/c/d/123", false},
-		{"dumaj.org.ua/a/b/c/d/123####abcd", "dumaj.org.ua/a/b/c/d/123#abcd", "a/b/c/d/123", false},
+		{"abc/", "abc", "/", false},
+		{"/abc", "/abc", "/abc", false},
+		{"dumaj.org.ua/abc/123#11", "dumaj.org.ua/abc/123#11", "/abc/123", false},
+		{"dumaj.org.ua//123", "dumaj.org.ua//123", "//123", false},
+		{"dumaj.org.ua/a/b/c/d/123", "dumaj.org.ua/a/b/c/d/123", "/a/b/c/d/123", false},
+		{"dumaj.org.ua/a/b/c/d/123#", "dumaj.org.ua/a/b/c/d/123", "/a/b/c/d/123", false},
+		{"dumaj.org.ua/a/b/c/d/123####abcd", "dumaj.org.ua/a/b/c/d/123####abcd", "/a/b/c/d/123", false},
 	}
 
 	for _, tc := range testCases {

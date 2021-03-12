@@ -5,6 +5,7 @@ import (
 )
 
 type Item struct {
+	Proto    string `json:"proto,omitempty"    bson:"proto,omitempty"`
 	Host     string `json:"host,omitempty"     bson:"host,omitempty"`
 	Path     string `json:"path,omitempty"     bson:"path,omitempty"`
 	Fragment string `json:"fragment,omitempty" bson:"fragment,omitempty"`
@@ -29,13 +30,11 @@ func (item *Item) URN() URN {
 	id := strlib.ReSpaces.ReplaceAllString(item.Fragment, "")
 
 	if len(id) > 0 {
-		return URN(host + PathDelim + path + IDDelim + id)
-	} else if len(path) > 0 {
-		return URN(host + PathDelim + path)
-	} else if len(host) > 0 {
-		return URN(host)
+		return URN(host + path + IDDelim + id)
+	} else if len(path) > 1 {
+		return URN(host + path)
 	} else {
-		return ""
+		return URN(host)
 	}
 }
 

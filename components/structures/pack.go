@@ -9,14 +9,18 @@ import (
 	"github.com/pavlo67/data_exchange/components/vcs"
 )
 
-type Pack struct {
+type PackDescription struct {
 	Title     string      `json:",omitempty" bson:",omitempty"`
 	Fields    Fields      `json:",omitempty" bson:",omitempty"`
-	Data      interface{} `json:",omitempty" bson:",omitempty"`
 	ErrorsMap ErrorsMap   `json:",omitempty" bson:",omitempty"`
 	History   vcs.History `json:",omitempty" bson:",omitempty"`
 	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`
 	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
+}
+
+type Pack struct {
+	PackDescription `            json:",inline"    bson:",inline"`
+	Data            interface{} `json:",omitempty" bson:",omitempty"`
 }
 
 func (pack *Pack) Stat() PackStat {

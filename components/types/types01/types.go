@@ -10,9 +10,10 @@ import (
 // persons -------------------------------------------------------------
 
 type Person struct {
-	structures.ItemDescription `json:",inline"    bson:",inline"`
-	rbac.Roles                 `json:",omitempty" bson:",omitempty"`
-	auth.Creds                 `json:",omitempty" bson:",omitempty"`
+	Nickname                   string `json:",omitempty" bson:",omitempty"`
+	rbac.Roles                 `       json:",omitempty" bson:",omitempty"`
+	structures.ItemDescription `       json:",inline"    bson:",inline"`
+	auth.Creds                 `       json:",omitempty" bson:",omitempty"`
 }
 
 // records -------------------------------------------------------------

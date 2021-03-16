@@ -2,37 +2,31 @@ package structures
 
 import (
 	"reflect"
-	"time"
 
 	"github.com/pavlo67/common/common"
-
-	"github.com/pavlo67/data_exchange/components/vcs"
 )
 
 type PackDescription struct {
-	Title     string      `json:",omitempty" bson:",omitempty"`
-	Fields    Fields      `json:",omitempty" bson:",omitempty"`
-	ErrorsMap ErrorsMap   `json:",omitempty" bson:",omitempty"`
-	History   vcs.History `json:",omitempty" bson:",omitempty"`
-	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`
-	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
+	ItemDescription `json:",inline"    bson:",inline"`
+	Fields          `json:",omitempty" bson:",omitempty"`
+	ErrorsMap       `json:",omitempty" bson:",omitempty"`
 }
 
 type Pack struct {
 	PackDescription `            json:",inline"    bson:",inline"`
-	Data            interface{} `json:",omitempty" bson:",omitempty"`
+	Items           interface{} `json:",omitempty" bson:",omitempty"`
 }
 
 func (pack *Pack) Stat() PackStat {
 	var packStat PackStat
 
-	if pack == nil || pack.Data == nil {
+	if pack == nil || pack.Items == nil {
 		return packStat
 	}
 
 	packStat.ItemsStat.Errored = len(pack.ErrorsMap) // TODO??? check non empty pack.ErrorsMap values only
-	if reflect.TypeOf(pack.Data).Kind() == reflect.Slice {
-		v := reflect.ValueOf(pack.Data)
+	if reflect.TypeOf(pack.Items).Kind() == reflect.Slice {
+		v := reflect.ValueOf(pack.Items)
 		packStat.ItemsStat.Total = v.Len()
 		for i := 0; i < packStat.ItemsStat.Total; i++ {
 			//itemI := v.Index(i).Interface()

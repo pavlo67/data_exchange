@@ -28,7 +28,7 @@ func (transformOp *transformerJSONAny) Name() string {
 	return string(InterfaceKey)
 }
 
-func (transformOp *transformerJSONAny) Reset() error {
+func (transformOp *transformerJSONAny) reset() error {
 	transformOp.any = nil
 	return nil
 }
@@ -41,7 +41,7 @@ func (transformOp *transformerJSONAny) Stat(selector *selectors.Term, params com
 	return nil, common.ErrNotImplemented
 }
 
-func (transformOp *transformerJSONAny) In(selector *selectors.Term, params common.Map, data interface{}) error {
+func (transformOp *transformerJSONAny) In(params common.Map, data interface{}) error {
 	transformOp.any = data
 	return nil
 }

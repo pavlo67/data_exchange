@@ -38,8 +38,11 @@ github.com/pavlo67/common v0.1.3/go.mod h1:jeTY8fhi+5wmGaT7kaixtDqOeU29gOXSwjca6
 github.com/pavlo67/common v0.1.8/go.mod h1:qgfXNpHCqQvXXNfEIOUVskYvABt3mJIHMJS5uzM6uv8=
 github.com/pavlo67/common v0.1.9 h1:8BaylY6M3zYxUnn8NUwWXqprD2+H3iFh4JBjRzLj/KY=
 github.com/pavlo67/common v0.1.9/go.mod h1:BBIlHw83Ra+MbWPV4QuEIYtvPV2HL8ZSnGIGEmFRZi0=
+github.com/pavlo67/common v0.1.10 h1:l2FNP5PtPJ4hZGn0kgGalxwKtmTApvfiDouMN6fp9Bs=
+github.com/pavlo67/common v0.1.10/go.mod h1:vu4EIUI5SdhIzpPaQWZJ28jBjOhiPZ4w/2If5jYQaQY=
 github.com/pavlo67/data_exchange v0.0.1/go.mod h1:035XWsGgIxFgvXuYTckDFMkp3IVNuPN+v2cMxVcyn0o=
 github.com/pavlo67/data_exchange v0.0.10/go.mod h1:m61JJNMkVDTfh7G9YEv1lN93BoOaVrOEq5AcMPzJhRg=
+github.com/pavlo67/data_exchange v0.0.12/go.mod h1:R7x5XJgP6Vm7RFX2UzP2J5CHNYhw0PLmNJ6v3+PFS4w=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

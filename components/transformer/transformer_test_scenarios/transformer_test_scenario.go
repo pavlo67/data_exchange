@@ -12,12 +12,11 @@ import (
 
 func TestOperator(t *testing.T, transformOp transformer.Operator, params common.Map, dataInitial interface{}, firstCheck bool) (copyFinal, finalStat, finalOut interface{}) {
 
+	var err error
+
 	// import/stat initial data ----------------------------------------------------------
 
-	err := transformOp.Reset()
-	require.NoError(t, err)
-
-	err = transformOp.In(nil, params, dataInitial)
+	err = transformOp.In(params, dataInitial)
 	require.NoError(t, err)
 
 	statInitial, err := transformOp.Stat(nil, params)
@@ -34,10 +33,7 @@ func TestOperator(t *testing.T, transformOp transformer.Operator, params common.
 		require.Equal(t, dataInitial, dataRepeat)
 	}
 
-	err = transformOp.Reset()
-	require.NoError(t, err)
-
-	err = transformOp.In(nil, params, dataRepeat)
+	err = transformOp.In(params, dataRepeat)
 	require.NoError(t, err)
 
 	statRepeat, err := transformOp.Stat(nil, params)
@@ -56,10 +52,7 @@ func TestOperator(t *testing.T, transformOp transformer.Operator, params common.
 
 	require.Equal(t, dataRepeat, dataFinal)
 
-	err = transformOp.Reset()
-	require.NoError(t, err)
-
-	err = transformOp.In(nil, params, dataFinal)
+	err = transformOp.In(params, dataFinal)
 	require.NoError(t, err)
 
 	statFinal, err := transformOp.Stat(nil, params)

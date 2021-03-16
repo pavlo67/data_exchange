@@ -31,7 +31,7 @@ func TableString(data string, separator string) (*structures.Table, error) {
 		if line == "" {
 			continue
 		}
-		table.Data = append(table.Data, strings.Split(line, separator))
+		table.Rows = append(table.Rows, strings.Split(line, separator))
 	}
 
 	return &table, nil

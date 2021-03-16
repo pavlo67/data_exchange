@@ -4,19 +4,22 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pavlo67/common/common/errors"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/pavlo67/common/common/errors"
 )
 
 func TestTableStat(t *testing.T) {
 	table := Table{
-		Title: "abc",
+		ItemDescription: ItemDescription{
+			Label:     "abc",
+			CreatedAt: time.Now(),
+		},
 		Fields: []Field{
 			{Name: "f1", Type: "t1", Format: "ff1", Tags: []string{"a", "b"}},
 			{Name: "f2", Type: "t2", Format: "ff2", Tags: []string{"a", "b"}},
 		},
-		Data: Rows{
+		Rows: Rows{
 			{"a", "b", "c", "d", "e"},
 			{"a", "b", "c", "d", "e", "f"},
 			{},
@@ -24,7 +27,6 @@ func TestTableStat(t *testing.T) {
 			{"1"},
 		},
 		ErrorsMap: ErrorsMap{2: map[string]errors.Error{"f2": errors.CommonError("1", "2")}},
-		CreatedAt: time.Now(),
 	}
 
 	tableStat, err := table.Stat()

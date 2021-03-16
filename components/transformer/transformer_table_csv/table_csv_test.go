@@ -15,7 +15,7 @@ import (
 )
 
 func TestTransformTableCSV(t *testing.T) {
-	_, cfgService, l := apps.PrepareTests(t, "../../../apps/", "test", "")
+	_, cfgService, l := apps.PrepareTests(t, "../../../apps/_environments/", "test", "")
 
 	components := []starter.Starter{
 		{Starter(), nil},

@@ -43,7 +43,7 @@ func (transformOp *transformStdoutAny) Name() string {
 	return string(InterfaceKey)
 }
 
-func (transformOp *transformStdoutAny) Reset() error {
+func (transformOp *transformStdoutAny) reset() error {
 	transformOp.any = nil
 	return nil
 }
@@ -59,7 +59,7 @@ const onIn = "on transformStdoutAny.In(): "
 // DEPRECATED: use common.ErrNotSupported
 var ErrNotSupported = errors.New("not_supported")
 
-func (transformOp *transformStdoutAny) In(selector *selectors.Term, params common.Map, data interface{}) error {
+func (transformOp *transformStdoutAny) In(params common.Map, data interface{}) error {
 	transformOp.any = data
 	return nil
 }
@@ -79,30 +79,30 @@ func (transformOp *transformStdoutAny) Copy(selector *selectors.Term, params com
 
 	switch v := transformOp.any.(type) {
 	case structures.Table:
-		for _, line := range v.Data {
+		for _, line := range v.Rows {
 			items = append(items, line)
 		}
 	case *structures.Table:
 		if v == nil {
 			return nil, fmt.Errorf(onCopy+": nil data (%T)", transformOp.any)
 		}
-		for _, line := range v.Data {
+		for _, line := range v.Rows {
 			items = append(items, line)
 		}
 	case structures.Pack:
-		if v.Data == nil {
+		if v.Items == nil {
 			return nil, fmt.Errorf(onCopy+": nil data (%T)", transformOp.any)
 		}
-		data := reflect.ValueOf(v.Data)
+		data := reflect.ValueOf(v.Items)
 
 		for i := 0; i < data.Len(); i++ {
 			items = append(items, data.Index(i).Interface())
 		}
 	case *structures.Pack:
-		if v == nil || v.Data == nil {
+		if v == nil || v.Items == nil {
 			return nil, fmt.Errorf(onCopy+": nil data (%T)", transformOp.any)
 		}
-		data := reflect.ValueOf(v.Data)
+		data := reflect.ValueOf(v.Items)
 		for i := 0; i < data.Len(); i++ {
 			items = append(items, data.Index(i).Interface())
 		}

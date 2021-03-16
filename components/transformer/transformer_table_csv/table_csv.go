@@ -32,7 +32,7 @@ func (transformOp *transformTableCSV) Name() string {
 	return string(InterfaceKey)
 }
 
-func (transformOp *transformTableCSV) Reset() error {
+func (transformOp *transformTableCSV) reset() error {
 	transformOp.table = nil
 	return nil
 }
@@ -45,8 +45,8 @@ func (transformOp *transformTableCSV) Stat(selector *selectors.Term, params comm
 
 const onIn = "on transformTableCSV.In(): "
 
-func (transformOp *transformTableCSV) In(selector *selectors.Term, params common.Map, data interface{}) error {
-	if err := transformOp.Reset(); err != nil {
+func (transformOp *transformTableCSV) In(params common.Map, data interface{}) error {
+	if err := transformOp.reset(); err != nil {
 		return errors.CommonError(err, onIn)
 	}
 
@@ -100,7 +100,7 @@ func (transformOp *transformTableCSV) In(selector *selectors.Term, params common
 		if err != nil {
 			return errors.CommonError(err, onIn)
 		}
-		transformOp.table.Title = path
+		transformOp.table.Label = path
 		transformOp.table.History = vcs.History{{
 			Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
 			Key:    vcs.CreatedAction,
@@ -125,7 +125,7 @@ func (transformOp *transformTableCSV) Out(selector *selectors.Term, params commo
 	var rowsStr []string
 
 	if transformOp.table != nil {
-		for _, row := range transformOp.table.Data {
+		for _, row := range transformOp.table.Rows {
 			// TODO!!! escape separators
 
 			rowsStr = append(rowsStr, strings.Join(row, separator))

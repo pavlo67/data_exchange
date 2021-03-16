@@ -10,6 +10,7 @@ import (
 // TODO!!! format URN according to RFC
 
 type URN common.IDStr
+type NSS common.IDStr
 
 // https://www.ietf.org/rfc/rfc2141.txt
 //

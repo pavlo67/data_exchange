@@ -24,12 +24,7 @@ type transformTableCSV struct {
 const onNew = "on transformTableCSV.New(): "
 
 func New() (transformer.Operator, error) {
-
 	return &transformTableCSV{}, nil
-}
-
-func (transformOp *transformTableCSV) Name() string {
-	return string(InterfaceKey)
 }
 
 func (transformOp *transformTableCSV) reset() error {
@@ -37,15 +32,17 @@ func (transformOp *transformTableCSV) reset() error {
 	return nil
 }
 
-const onStat = "on transformTableCSV.Stat(): "
-
-func (transformOp *transformTableCSV) Stat(selector *selectors.Term, params common.Map) (interface{}, error) {
-	return transformOp.table.Stat()
+func (transformOp *transformTableCSV) Name() string {
+	return string(InterfaceKey)
 }
 
 const onIn = "on transformTableCSV.In(): "
 
-func (transformOp *transformTableCSV) In(params common.Map, data interface{}) error {
+func (transformOp *transformTableCSV) In(pack structures.Pack, params common.Map) error {
+	if pack == nil {
+		return errors.New(onIn + "nil pack to import")
+	}
+
 	if err := transformOp.reset(); err != nil {
 		return errors.CommonError(err, onIn)
 	}
@@ -56,6 +53,8 @@ func (transformOp *transformTableCSV) In(params common.Map, data interface{}) er
 	if separator == "" {
 		return fmt.Errorf(onIn + ": no 'separator' value in params")
 	}
+
+	data := pack.Data()
 
 	if data != nil {
 		var dataStr string
@@ -116,7 +115,7 @@ func (transformOp *transformTableCSV) In(params common.Map, data interface{}) er
 
 const onOut = "on transformTableCSV.Out(): "
 
-func (transformOp *transformTableCSV) Out(selector *selectors.Term, params common.Map) (data interface{}, err error) {
+func (transformOp *transformTableCSV) Out(selector *selectors.Term, params common.Map) (data structures.Pack, err error) {
 	separator := params.StringDefault("separator", "")
 	if separator == "" {
 		return nil, fmt.Errorf(onOut + ": no 'separator' value in params")
@@ -132,9 +131,18 @@ func (transformOp *transformTableCSV) Out(selector *selectors.Term, params commo
 		}
 	}
 
-	return strings.Join(rowsStr, "\n"), nil
+	return &structures.PackAny{
+		PackDescription: transformOp.table.PackDescription,
+		PackData:        strings.Join(rowsStr, "\n"),
+	}, nil
 }
 
-func (transformOp *transformTableCSV) Copy(selector *selectors.Term, params common.Map) (data interface{}, err error) {
+const onStat = "on transformTableCSV.Stat(): "
+
+func (transformOp *transformTableCSV) Stat(selector *selectors.Term, params common.Map) (interface{}, error) {
+	return transformOp.table.Stat()
+}
+
+func (transformOp *transformTableCSV) Copy(selector *selectors.Term, params common.Map) (interface{}, error) {
 	return transformOp.table, nil
 }

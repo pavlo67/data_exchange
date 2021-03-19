@@ -66,7 +66,7 @@ func (rss *personsSQLiteStarter) Run(joinerOp joiner.Operator) error {
 	}
 
 	if err = joinerOp.Join(personsCleanerOp, rss.cleanerKey); err != nil {
-		return errors.CommonError(err, fmt.Sprintf("can't join *personsSQLite as crud.Cleaner with key '%s'", rss.cleanerKey))
+		return errors.CommonError(err, fmt.Sprintf("can't join *personsSQLite as db.Cleaner with key '%s'", rss.cleanerKey))
 	}
 
 	return nil

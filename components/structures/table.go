@@ -4,13 +4,21 @@ import (
 	"fmt"
 )
 
+var _ Pack = &Table{}
+
 type Rows [][]string
 
 type Table struct {
-	ItemDescription `json:",inline"    bson:",inline"`
-	Fields          `json:",omitempty" bson:",omitempty"`
+	PackDescription `json:",inline"    bson:",inline"`
 	Rows            `json:",omitempty" bson:",omitempty"`
-	ErrorsMap       `json:",omitempty" bson:",omitempty"`
+}
+
+func (table *Table) Description() PackDescription {
+	return table.PackDescription
+}
+
+func (table *Table) Data() interface{} {
+	return table.Rows
 }
 
 func (table *Table) Stat() (*TableStat, error) {

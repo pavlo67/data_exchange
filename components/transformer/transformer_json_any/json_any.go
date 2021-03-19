@@ -6,6 +6,10 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/pavlo67/data_exchange/components/structures"
+
+	"github.com/pavlo67/common/common/errors"
+
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/selectors"
 	"github.com/pavlo67/data_exchange/components/transformer"
@@ -14,7 +18,7 @@ import (
 var _ transformer.Operator = &transformerJSONAny{}
 
 type transformerJSONAny struct {
-	any interface{}
+	packAny *structures.PackAny
 }
 
 const onNew = "on transformerJSONAny.New(): "
@@ -24,13 +28,31 @@ func New(path string, exemplar interface{}, prefix, indent string) (transformer.
 	return &transformOp, nil
 }
 
+func (transformOp *transformerJSONAny) reset() error {
+	transformOp.packAny = nil
+	return nil
+}
+
 func (transformOp *transformerJSONAny) Name() string {
 	return string(InterfaceKey)
 }
 
-func (transformOp *transformerJSONAny) reset() error {
-	transformOp.any = nil
+const onIn = "on transformerJSONAny.In(): "
+
+func (transformOp *transformerJSONAny) In(pack structures.Pack, params common.Map) error {
+	if pack == nil {
+		return errors.New(onIn + "nil pack to import")
+	}
+
+	transformOp.packAny = &structures.PackAny{
+		PackDescription: pack.Description(),
+		PackData:        pack.Data(),
+	}
 	return nil
+}
+
+func (transformOp *transformerJSONAny) Out(selector *selectors.Term, params common.Map) (pack structures.Pack, err error) {
+	return transformOp.packAny, nil
 }
 
 const onStat = "on transformerJSONAny.Stat(): "
@@ -41,32 +63,24 @@ func (transformOp *transformerJSONAny) Stat(selector *selectors.Term, params com
 	return nil, common.ErrNotImplemented
 }
 
-func (transformOp *transformerJSONAny) In(params common.Map, data interface{}) error {
-	transformOp.any = data
-	return nil
-}
-
-func (transformOp *transformerJSONAny) Out(selector *selectors.Term, params common.Map) (data interface{}, err error) {
-	return transformOp.any, nil
-}
-
 const onCopy = "on transformerJSONAny.Copy(): "
 
-func (transformOp *transformerJSONAny) Copy(selector *selectors.Term, params common.Map) (data interface{}, err error) {
+func (transformOp *transformerJSONAny) Copy(selector *selectors.Term, params common.Map) (interface{}, error) {
 	prefix := params.StringDefault("prefix", "")
 	indent := params.StringDefault("indent", "")
 	path := strings.TrimSpace(params.StringDefault("path", ""))
 
 	var bytes []byte
+	var err error
 
-	if transformOp.any != nil {
+	if transformOp.packAny != nil {
 		if prefix+indent != "" {
-			bytes, err = json.MarshalIndent(transformOp.any, prefix, indent)
+			bytes, err = json.MarshalIndent(transformOp.packAny, prefix, indent)
 		} else {
-			bytes, err = json.Marshal(transformOp.any)
+			bytes, err = json.Marshal(transformOp.packAny)
 		}
 		if err != nil {
-			return nil, fmt.Errorf(onCopy+": marshalling %#v got %s", transformOp.any, err)
+			return nil, fmt.Errorf(onCopy+": marshalling %#v got %s", transformOp.packAny, err)
 		}
 	}
 

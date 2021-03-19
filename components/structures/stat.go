@@ -42,26 +42,6 @@ func (fieldsStat *FieldsStat) String() string {
 	return "\n    " + strings.Join(fieldsStatStr, "\n    ")
 }
 
-var _ fmt.Stringer = &PackStat{}
-
-type PackStat struct {
-	ItemsStat
-	FieldsStat
-	ErrorsStat
-}
-
-func (packStat *PackStat) String() string {
-	if packStat == nil {
-		return "nil"
-	}
-	return fmt.Sprintf(
-		"\n  ItemsStat:\n                %s\n  FieldsStat: %s\n  ErrorsStat:\n                %s",
-		packStat.ItemsStat.String(),
-		packStat.FieldsStat.String(),
-		packStat.ErrorsStat.String(),
-	)
-}
-
 type ErrorsStat struct {
 	Total    int
 	Distinct int

@@ -1,4 +1,4 @@
-package transformer_persons_operator_pack
+package transformer_persons_operator_pack_types01
 
 import (
 	"fmt"
@@ -18,31 +18,31 @@ import (
 const InterfaceKey joiner.InterfaceKey = "transformer_operator_persons_pack"
 
 func Starter() starter.Operator {
-	return &transformerPackPersonsOperatorStarter{}
+	return &transformerPersonsOperatorPackTypes01Starter{}
 }
 
 // ---------------------------------------------------------------------------------
 
 var l logger.Operator
-var _ starter.Operator = &transformerPackPersonsOperatorStarter{}
+var _ starter.Operator = &transformerPersonsOperatorPackTypes01Starter{}
 
-type transformerPackPersonsOperatorStarter struct {
+type transformerPersonsOperatorPackTypes01Starter struct {
 	personsKey   joiner.InterfaceKey
 	interfaceKey joiner.InterfaceKey
 }
 
-func (tppos *transformerPackPersonsOperatorStarter) Name() string {
+func (tppos *transformerPersonsOperatorPackTypes01Starter) Name() string {
 	return logger.GetCallInfo().PackageName
 }
 
-func (tppos *transformerPackPersonsOperatorStarter) Prepare(cfg *config.Config, options common.Map) error {
+func (tppos *transformerPersonsOperatorPackTypes01Starter) Prepare(cfg *config.Config, options common.Map) error {
 	tppos.personsKey = joiner.InterfaceKey(options.StringDefault("persons_key", string(persons.InterfaceKey)))
 	tppos.interfaceKey = joiner.InterfaceKey(options.StringDefault("interface_key", string(InterfaceKey)))
 
 	return nil
 }
 
-func (tppos *transformerPackPersonsOperatorStarter) Run(joinerOp joiner.Operator) error {
+func (tppos *transformerPersonsOperatorPackTypes01Starter) Run(joinerOp joiner.Operator) error {
 	if l, _ = joinerOp.Interface(logger.InterfaceKey).(logger.Operator); l == nil {
 		return fmt.Errorf("no logger.Operator with key %s", logger.InterfaceKey)
 	}
@@ -58,7 +58,7 @@ func (tppos *transformerPackPersonsOperatorStarter) Run(joinerOp joiner.Operator
 	}
 
 	if err = joinerOp.Join(transformOp, tppos.interfaceKey); err != nil {
-		return errors.CommonError(err, fmt.Sprintf("can't join *transformerOperatorPackPersons as transform.Operator with key '%s'", tppos.interfaceKey))
+		return errors.CommonError(err, fmt.Sprintf("can't join *transformerOperatorPackPersonsTypes01 as transform.Operator with key '%s'", tppos.interfaceKey))
 	}
 
 	return nil

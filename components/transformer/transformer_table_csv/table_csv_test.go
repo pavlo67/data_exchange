@@ -11,7 +11,6 @@ import (
 	"github.com/pavlo67/common/common/starter"
 
 	"github.com/pavlo67/data_exchange/components/transformer"
-	"github.com/pavlo67/data_exchange/components/transformer/transformer_test_scenarios"
 )
 
 func TestTransformTableCSV(t *testing.T) {
@@ -37,7 +36,7 @@ func TestTransformTableCSV(t *testing.T) {
 
 	dataInitial := "as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l"
 
-	copyFinal, statFinal, dataFinal := transformer_test_scenarios.TestOperator(t, transformOp, params, dataInitial, true)
+	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, dataInitial, true)
 
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)
 

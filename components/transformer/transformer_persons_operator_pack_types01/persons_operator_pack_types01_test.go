@@ -1,4 +1,4 @@
-package transformer_persons_pack_types01
+package transformer_persons_operator_pack_types01
 
 import (
 	"fmt"
@@ -10,44 +10,56 @@ import (
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/apps"
 	"github.com/pavlo67/common/common/auth"
+	"github.com/pavlo67/common/common/db"
+	"github.com/pavlo67/common/common/db/db_sqlite"
 	"github.com/pavlo67/common/common/rbac"
 	"github.com/pavlo67/common/common/starter"
 
+	"github.com/pavlo67/data_exchange/components/persons"
+	"github.com/pavlo67/data_exchange/components/persons/persons_sqlite"
 	"github.com/pavlo67/data_exchange/components/structures"
+	"github.com/pavlo67/data_exchange/components/structures/types01"
 	"github.com/pavlo67/data_exchange/components/transformer"
-	"github.com/pavlo67/data_exchange/components/transformer/transformer_test_scenarios"
-	"github.com/pavlo67/data_exchange/components/types/types01"
 )
 
-func TestTransformTableCSV(t *testing.T) {
+func TestTransformPersonsOperatorPack(t *testing.T) {
+
 	_, cfgService, l := apps.PrepareTests(t, "../../../apps/_environments/", "test", "")
 
 	components := []starter.Starter{
-		{Starter(), nil},
+		{db_sqlite.Starter(), nil},
+		{persons_sqlite.Starter(), nil},
+		{Starter(), common.Map{"persons_cleaner_key": persons.InterfaceCleanerKey}},
 	}
 
-	label := "PACK_PERSONS_TYPES01/TEST BUILD"
+	label := "PERSONS_OPERATOR_PACK/TEST BUILD"
 	joinerOp, err := starter.Run(components, cfgService, label, l)
 	if err != nil {
 		l.Fatal(err)
 	}
 	defer joinerOp.CloseAll()
 
+	personsOp, _ := joinerOp.Interface(persons.InterfaceKey).(persons.Operator)
+	require.NotNil(t, personsOp)
+
+	personsCleanerOp, _ := joinerOp.Interface(persons.InterfaceCleanerKey).(db.Cleaner)
+	require.NotNil(t, personsCleanerOp)
+
 	transformOp, _ := joinerOp.Interface(InterfaceKey).(transformer.Operator)
 	require.NotNil(t, transformOp)
 
-	dataInitial := structures.Pack{
+	dataInitial := structures.PackAny{
 		PackDescription: structures.PackDescription{
 			Fields: structures.Fields{},
-			// ErrorsMap: nil,
 			ItemDescription: structures.ItemDescription{
+				Label: "title",
+				// ErrorsMap: nil,
 				// History:   nil,
-				Label:     "title",
 				CreatedAt: time.Now(),
 				// UpdatedAt: nil,
 			},
 		},
-		Items: []types01.Person{
+		PackData: []types01.Person{
 			{
 				Nickname: "wqerwqer",
 				Roles:    nil,
@@ -79,7 +91,10 @@ func TestTransformTableCSV(t *testing.T) {
 
 	var params common.Map
 
-	copyFinal, statFinal, dataFinal := transformer_test_scenarios.TestOperator(t, transformOp, params, dataInitial, true)
+	err = personsCleanerOp.Clean(nil)
+	require.NoError(t, err)
+
+	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, dataInitial, true)
 
 	//copyFinal, _ := transformOp.Copy(nil, params)
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)

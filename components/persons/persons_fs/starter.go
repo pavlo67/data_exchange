@@ -63,7 +63,7 @@ func (uks *personsFSStubStarter) Run(joinerOp joiner.Operator) error {
 	}
 
 	if err = joinerOp.Join(personsCleanerOp, uks.interfaceCleanerKey); err != nil {
-		return errors.Wrap(err, "can't join *personsFSStub{} as crud.Cleaner interface")
+		return errors.Wrap(err, "can't join *personsFSStub{} as db.Cleaner interface")
 	}
 
 	return nil

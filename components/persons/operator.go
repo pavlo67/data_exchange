@@ -24,16 +24,11 @@ type Operator interface {
 }
 
 type Item struct {
-	auth.Identity              ` json:",inline" bson:",inline"`
-	structures.ItemDescription ` json:",inline" bson:",inline"`
+	auth.Identity              `json:",inline" bson:",inline"`
+	structures.ItemDescription `json:",inline" bson:",inline"`
 
 	// hidden values
 	creds auth.Creds `json:",omitempty" bson:",omitempty"`
-}
-
-type Pack struct {
-	structures.PackDescription
-	Items []Item
 }
 
 func (item *Item) UnfoldFromJSON(id auth.ID, rolesBytes, credsBytes, emailBytes, infoBytes, tagsBytes, urnBytes, historyBytes []byte) error {

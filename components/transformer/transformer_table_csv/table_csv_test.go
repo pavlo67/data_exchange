@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/pavlo67/data_exchange/components/structures"
+
 	"github.com/stretchr/testify/require"
 
 	"github.com/pavlo67/common/common"
@@ -34,9 +36,16 @@ func TestTransformTableCSV(t *testing.T) {
 		"separator": "\t",
 	}
 
-	dataInitial := "as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l"
+	packInitial := structures.PackAny{
+		PackDescription: structures.PackDescription{
+			ItemDescription: structures.ItemDescription{
+				URN: "test:test",
+			},
+		},
+		PackData: "as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l",
+	}
 
-	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, dataInitial, true)
+	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, &packInitial, true)
 
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)
 

@@ -3,16 +3,13 @@ package transformer_table_csv
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/errors"
 	"github.com/pavlo67/common/common/selectors"
 
-	"github.com/pavlo67/data_exchange/components/ns"
 	"github.com/pavlo67/data_exchange/components/structures"
 	"github.com/pavlo67/data_exchange/components/transformer"
-	"github.com/pavlo67/data_exchange/components/vcs"
 )
 
 var _ transformer.Operator = &transformTableCSV{}
@@ -54,6 +51,10 @@ func (transformOp *transformTableCSV) In(pack structures.Pack, params common.Map
 		return fmt.Errorf(onIn + ": no 'separator' value in params")
 	}
 
+	transformOp.table = &structures.Table{
+		PackDescription: pack.Description(),
+	}
+
 	data := pack.Data()
 
 	if data != nil {
@@ -79,32 +80,33 @@ func (transformOp *transformTableCSV) In(pack structures.Pack, params common.Map
 		}
 
 		// TODO!!! unescape separators
-		transformOp.table, err = TableString(dataStr, separator)
+
+		transformOp.table.Rows, err = RowsString(dataStr, separator)
 		if err != nil {
 			return errors.CommonError(err, onIn)
 		} else if transformOp.table == nil {
 			return errors.CommonError("no table", onIn)
 		}
-		transformOp.table.History = vcs.History{{
-			Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
-			Key:    vcs.CreatedAction,
-			DoneAt: time.Now(),
-		}}
+		//transformOp.table.History = vcs.History{{
+		//	Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
+		//	Key:    vcs.CreatedAction,
+		//	DoneAt: time.Now(),
+		//}}
 		return nil
 	}
 
 	if path := params.StringDefault("path", ""); path != "" {
 		// TODO!!! unescape separators
-		_, transformOp.table, err = TableFile(path, separator)
+		_, transformOp.table.Rows, err = RowsFile(path, separator)
 		if err != nil {
 			return errors.CommonError(err, onIn)
 		}
 		transformOp.table.Label = path
-		transformOp.table.History = vcs.History{{
-			Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
-			Key:    vcs.CreatedAction,
-			DoneAt: time.Now(),
-		}}
+		//transformOp.table.History = vcs.History{{
+		//	Actor:  ns.URN(InterfaceKey), // TODO??????????????????????????????????????????
+		//	Key:    vcs.CreatedAction,
+		//	DoneAt: time.Now(),
+		//}}
 		// TODO!!! add file info
 
 		return nil

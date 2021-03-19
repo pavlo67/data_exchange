@@ -11,7 +11,7 @@ import (
 	"github.com/pavlo67/data_exchange/components/structures"
 )
 
-func TestOperator(t *testing.T, transformOp Operator, params common.Map, packInitial structures.Pack, firstCheck bool) (copyFinal, statFinal, outFinal structures.Pack) {
+func TestOperator(t *testing.T, transformOp Operator, params common.Map, packInitial structures.Pack, firstCheck bool) (copyFinal, statFinal interface{}, outFinal structures.Pack) {
 
 	var err error
 
@@ -19,7 +19,7 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 
 	require.NotNil(t, packInitial)
 
-	packURN := packInitial.URN()
+	packURN := packInitial.Description().URN
 	require.NotEmpty(t, packURN)
 
 	selector := selectors.Term{

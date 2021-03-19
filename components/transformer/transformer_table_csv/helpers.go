@@ -9,30 +9,30 @@ import (
 	"github.com/pavlo67/data_exchange/components/structures"
 )
 
-func TableFile(filename, separator string) ([]byte, *structures.Table, error) {
+func RowsFile(filename, separator string) ([]byte, structures.Rows, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, nil, fmt.Errorf("reading %s got %s", filename, err)
 	}
 
-	table, err := TableString(string(data), separator)
+	table, err := RowsString(string(data), separator)
 	return data, table, nil
 }
 
-func TableString(data string, separator string) (*structures.Table, error) {
+func RowsString(data string, separator string) (structures.Rows, error) {
 	if separator == "" {
-		return nil, errors.New("on extraction.TableString(): no fields separator")
+		return nil, errors.New("on extraction.RowsString(): no fields separator")
 	}
 
 	lines := strings.Split(data, "\n")
 
-	var table structures.Table
+	var rows structures.Rows
 	for _, line := range lines {
 		if line == "" {
 			continue
 		}
-		table.Rows = append(table.Rows, strings.Split(line, separator))
+		rows = append(rows, strings.Split(line, separator))
 	}
 
-	return &table, nil
+	return rows, nil
 }

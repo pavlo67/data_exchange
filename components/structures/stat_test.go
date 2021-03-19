@@ -11,13 +11,16 @@ import (
 
 func TestTableStat(t *testing.T) {
 	table := Table{
-		ItemDescription: ItemDescription{
-			Label:     "abc",
-			CreatedAt: time.Now(),
-		},
-		Fields: []Field{
-			{Name: "f1", Type: "t1", Format: "ff1", Tags: []string{"a", "b"}},
-			{Name: "f2", Type: "t2", Format: "ff2", Tags: []string{"a", "b"}},
+		PackDescription: PackDescription{
+			ItemDescription: ItemDescription{
+				Label:     "abc",
+				CreatedAt: time.Now(),
+			},
+			Fields: []Field{
+				{Name: "f1", Type: "t1", Format: "ff1", Tags: []string{"a", "b"}},
+				{Name: "f2", Type: "t2", Format: "ff2", Tags: []string{"a", "b"}},
+			},
+			ErrorsMap: ErrorsMap{2: map[string]errors.Error{"f2": errors.CommonError("1", "2")}},
 		},
 		Rows: Rows{
 			{"a", "b", "c", "d", "e"},
@@ -26,7 +29,6 @@ func TestTableStat(t *testing.T) {
 			{},
 			{"1"},
 		},
-		ErrorsMap: ErrorsMap{2: map[string]errors.Error{"f2": errors.CommonError("1", "2")}},
 	}
 
 	tableStat, err := table.Stat()

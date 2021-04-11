@@ -45,7 +45,7 @@ func TestTransformTableCSV(t *testing.T) {
 		PackData: "as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l",
 	}
 
-	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, &packInitial, true)
+	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, &packInitial, true, true)
 
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)
 

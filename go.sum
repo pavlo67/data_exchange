@@ -237,6 +237,8 @@ github.com/pavlo67/common v0.1.10 h1:l2FNP5PtPJ4hZGn0kgGalxwKtmTApvfiDouMN6fp9Bs
 github.com/pavlo67/common v0.1.10/go.mod h1:vu4EIUI5SdhIzpPaQWZJ28jBjOhiPZ4w/2If5jYQaQY=
 github.com/pavlo67/common v0.1.11 h1:HRSETXzBV+F+wdMFJ8ZjWVEsP/nVZFfzSnqRZJNRn0s=
 github.com/pavlo67/common v0.1.11/go.mod h1:URj2WuuL552B2paIv3hRP9Kz0uSkHWDfqhu4F897oCo=
+github.com/pavlo67/common v0.1.13 h1:emEnwlQZVRQWnO3JrpylwLFckwlLTjrliJTSDR61NUw=
+github.com/pavlo67/common v0.1.13/go.mod h1:C3WQc3ndCAr/JC5/tIVCDtdovbDCKNo+o5D/hqhq5hA=
 github.com/pavlo67/data_exchange v0.0.1/go.mod h1:035XWsGgIxFgvXuYTckDFMkp3IVNuPN+v2cMxVcyn0o=
 github.com/pavlo67/data_exchange v0.0.10/go.mod h1:m61JJNMkVDTfh7G9YEv1lN93BoOaVrOEq5AcMPzJhRg=
 github.com/pavlo67/data_exchange v0.0.12/go.mod h1:R7x5XJgP6Vm7RFX2UzP2J5CHNYhw0PLmNJ6v3+PFS4w=

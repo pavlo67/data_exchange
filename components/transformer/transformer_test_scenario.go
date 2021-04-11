@@ -11,7 +11,8 @@ import (
 	"github.com/pavlo67/data_exchange/components/structures"
 )
 
-func TestOperator(t *testing.T, transformOp Operator, params common.Map, packInitial structures.Pack, firstCheck bool) (copyFinal, statFinal interface{}, outFinal structures.Pack) {
+func TestOperator(t *testing.T, transformOp Operator, params common.Map, packInitial structures.Pack, checkFirstCopy, checkPackDescription bool) (copyFinal, statFinal interface{},
+	outFinal structures.Pack) {
 
 	var err error
 
@@ -42,8 +43,11 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 	require.NoError(t, err)
 	require.NotNil(t, packRepeat)
 
-	if firstCheck {
-		require.Equal(t, packInitial, packRepeat)
+	if checkFirstCopy {
+		if checkPackDescription {
+			require.Equal(t, packInitial.Description(), packRepeat.Description())
+		}
+		require.Equal(t, packInitial.Data(), packRepeat.Data())
 	}
 
 	err = transformOp.In(packRepeat, params)
@@ -53,7 +57,7 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 	require.NoError(t, err)
 	require.NotNil(t, statRepeat)
 
-	if firstCheck {
+	if checkFirstCopy {
 		require.Equal(t, statInitial, statRepeat)
 	}
 
@@ -63,7 +67,11 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 	require.NoError(t, err)
 	require.NotNil(t, packFinal)
 
-	require.Equal(t, packRepeat, packFinal)
+	if checkPackDescription {
+		require.Equal(t, packRepeat.Description(), packFinal.Description())
+	}
+	require.Equal(t, packRepeat.Data(), packFinal.Data())
+	// require.Equal(t, packRepeat, packFinal)
 
 	err = transformOp.In(packFinal, params)
 	require.NoError(t, err)

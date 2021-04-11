@@ -15,6 +15,11 @@
 * sender.Operator.Handle, sender.Operator.History
 * мережа довірених адресатів
 
+## transformer
+
+### json_any
+
+* розбивати вивід на окремі файли
 
 ## data, packs, tasks
 

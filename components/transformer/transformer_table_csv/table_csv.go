@@ -55,7 +55,7 @@ func (transformOp *transformTableCSV) In(pack structures.Pack, params common.Map
 		PackDescription: pack.Description(),
 	}
 
-	data := pack.Data()
+	data := pack.Data().Value()
 
 	if data != nil {
 		var dataStr string
@@ -135,7 +135,7 @@ func (transformOp *transformTableCSV) Out(selector *selectors.Term, params commo
 
 	return &structures.PackAny{
 		PackDescription: transformOp.table.PackDescription,
-		PackData:        strings.Join(rowsStr, "\n"),
+		PackData:        structures.NewDataAny(strings.Join(rowsStr, "\n")),
 	}, nil
 }
 

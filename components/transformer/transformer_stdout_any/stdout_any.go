@@ -8,12 +8,12 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/pavlo67/data_exchange/components/structures"
-	"github.com/pavlo67/data_exchange/components/transformer"
-
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/errors"
 	"github.com/pavlo67/common/common/selectors"
+
+	"github.com/pavlo67/data_exchange/components/structures"
+	"github.com/pavlo67/data_exchange/components/transformer"
 )
 
 var _ transformer.Operator = &transformStdoutAny{}
@@ -64,7 +64,7 @@ func (transformOp *transformStdoutAny) In(pack structures.Pack, params common.Ma
 
 	transformOp.packAny = &structures.PackAny{
 		PackDescription: pack.Description(),
-		PackData:        pack.Data(),
+		PackData:        structures.NewDataAny(pack.Data().Value()),
 	}
 	return nil
 }
@@ -88,7 +88,7 @@ func (transformOp *transformStdoutAny) Copy(selector *selectors.Term, params com
 
 	var items []interface{}
 
-	switch v := transformOp.packAny.PackData.(type) {
+	switch v := transformOp.packAny.PackData.Value().(type) {
 	case structures.Rows:
 		for _, line := range v {
 			items = append(items, line)

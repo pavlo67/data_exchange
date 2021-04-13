@@ -2,11 +2,22 @@ package structures
 
 import (
 	"fmt"
+	"reflect"
 )
 
 var _ Pack = &Table{}
 
+var _ Data = &Rows{}
+
 type Rows [][]string
+
+func (rows Rows) IsEqualTo(dataAnother interface{}) (bool, error) {
+	return reflect.DeepEqual(rows, dataAnother), nil
+}
+
+func (rows Rows) Value() interface{} {
+	return rows
+}
 
 type Table struct {
 	PackDescription `json:",inline"    bson:",inline"`
@@ -17,8 +28,8 @@ func (table *Table) Description() PackDescription {
 	return table.PackDescription
 }
 
-func (table *Table) Data() interface{} {
-	return table.Rows
+func (table *Table) Data() Data {
+	return &table.Rows
 }
 
 func (table *Table) Stat() (*TableStat, error) {

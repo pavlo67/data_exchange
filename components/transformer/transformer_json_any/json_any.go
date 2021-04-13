@@ -46,7 +46,7 @@ func (transformOp *transformerJSONAny) In(pack structures.Pack, params common.Ma
 
 	transformOp.packAny = &structures.PackAny{
 		PackDescription: pack.Description(),
-		PackData:        pack.Data(),
+		PackData:        structures.NewDataAny(pack.Data().Value()),
 	}
 	return nil
 }

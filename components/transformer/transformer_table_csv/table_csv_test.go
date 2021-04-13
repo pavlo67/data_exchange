@@ -16,7 +16,7 @@ import (
 )
 
 func TestTransformTableCSV(t *testing.T) {
-	_, cfgService, l := apps.PrepareTests(t, "../../../apps/_environments/", "test", "")
+	_, cfgService, l := apps.PrepareTests(t, "../../../_environments/", "test", "")
 
 	components := []starter.Starter{
 		{Starter(), nil},
@@ -42,7 +42,7 @@ func TestTransformTableCSV(t *testing.T) {
 				URN: "test:test",
 			},
 		},
-		PackData: "as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l",
+		PackData: structures.NewDataAny("as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l"),
 	}
 
 	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, &packInitial, true, true)

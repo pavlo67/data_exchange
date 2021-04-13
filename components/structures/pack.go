@@ -16,9 +16,14 @@ type PackDescription struct {
 	ErrorsMap       `json:",omitempty" bson:",omitempty"`
 }
 
+type Data interface {
+	Value() interface{}
+	IsEqualTo(interface{}) (bool, error)
+}
+
 type Pack interface {
 	Description() PackDescription
-	Data() interface{}
+	Data() Data
 }
 
 func Stat(pack Pack) PackStat {

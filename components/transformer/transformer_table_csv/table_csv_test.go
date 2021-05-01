@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pavlo67/data_exchange/components/structures"
+	"github.com/pavlo67/data/components/structures"
 
 	"github.com/stretchr/testify/require"
 
@@ -12,7 +12,7 @@ import (
 	"github.com/pavlo67/common/common/apps"
 	"github.com/pavlo67/common/common/starter"
 
-	"github.com/pavlo67/data_exchange/components/transformer"
+	"github.com/pavlo67/data/components/transformer"
 )
 
 func TestTransformTableCSV(t *testing.T) {

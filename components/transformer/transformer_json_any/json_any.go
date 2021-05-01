@@ -6,13 +6,13 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/pavlo67/data_exchange/components/structures"
+	"github.com/pavlo67/data/components/structures"
 
 	"github.com/pavlo67/common/common/errors"
 
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/selectors"
-	"github.com/pavlo67/data_exchange/components/transformer"
+	"github.com/pavlo67/data/components/transformer"
 )
 
 var _ transformer.Operator = &transformerJSONAny{}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/pavlo67/data_exchange/components/ns"
+	"github.com/pavlo67/data/components/ns"
 )
 
 func TestHistoryCheckOn(t *testing.T) {

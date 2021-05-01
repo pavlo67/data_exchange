@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/pavlo67/data_exchange/components/structures"
+	"github.com/pavlo67/data/components/structures"
 )
 
 func RowsFile(filename, separator string) ([]byte, structures.Rows, error) {

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/pavlo67/data_exchange/components/ns"
+	"github.com/pavlo67/data/components/ns"
 )
 
 type ActionKey string

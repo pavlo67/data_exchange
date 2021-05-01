@@ -1,7 +1,9 @@
-package transformer
+package transformer_persons_operator_pack_types01
 
 import (
 	"testing"
+
+	"github.com/pavlo67/data/components/transformer"
 
 	"github.com/stretchr/testify/require"
 
@@ -11,7 +13,8 @@ import (
 	"github.com/pavlo67/data/components/structures"
 )
 
-func TestOperator(t *testing.T, transformOp Operator, params common.Map, packInitial structures.Pack, checkFirstCopy, checkPackDescription bool) (copyFinal, statFinal interface{},
+func TestOperator(t *testing.T, transformOp transformer.Operator, params common.Map, packInitial structures.Pack, checkFirstCopy, checkPackDescription bool) (copyFinal,
+	statFinal interface{},
 	outFinal structures.Pack) {
 
 	var err error
@@ -36,6 +39,8 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 	statInitial, err := transformOp.Stat(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, statInitial)
+
+	// l.Fatalf("%#v\n\n--> %#v / %#v", packInitial.Data(), statInitial, selector)
 
 	// data export/import and its comparison with initial one ----------------------------
 

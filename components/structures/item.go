@@ -8,8 +8,8 @@ import (
 
 	"github.com/pavlo67/common/common"
 
-	"github.com/pavlo67/data_exchange/components/ns"
-	"github.com/pavlo67/data_exchange/components/vcs"
+	"github.com/pavlo67/data/components/ns"
+	"github.com/pavlo67/data/components/vcs"
 )
 
 type ItemDescription struct {

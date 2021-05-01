@@ -5,10 +5,9 @@ import (
 	"reflect"
 
 	"github.com/pavlo67/common/common"
-	"github.com/pavlo67/common/common/selectors"
 )
 
-const InPack selectors.Key = "in_pack"
+//const InPack selectors.Key = "in_pack"
 
 type PackDescription struct {
 	ItemDescription `json:",inline"    bson:",inline"`

@@ -1,24 +1,22 @@
 package records
 
 import (
+	"github.com/pavlo67/data/components/ns"
 	"os"
 	"testing"
-
-	"github.com/pavlo67/data/components/ns"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/pavlo67/common/common/auth"
 	"github.com/pavlo67/common/common/db"
 	"github.com/pavlo67/common/common/joiner"
-	"github.com/pavlo67/common/common/logger"
 	"github.com/pavlo67/common/common/selectors"
 )
 
 // TODO: test .History
 // TODO: test .List() with selectors
 
-func OperatorTestScenarioNoRBAC(t *testing.T, joinerOp joiner.Operator, l logger.Operator) {
+func OperatorTestScenarioNoRBAC(t *testing.T, joinerOp joiner.Operator) {
 
 	if env, ok := os.LookupEnv("ENV"); !ok || env != "test" {
 		t.Fatal("No test environment!!!")
@@ -47,23 +45,40 @@ func OperatorTestScenarioNoRBAC(t *testing.T, joinerOp joiner.Operator, l logger
 	//require.Error(t, err)
 	//require.Empty(t, item01Saved)
 
-	// save record without OwnerNSS: added automatically, ok -------------------
+	//// save record without OwnerNSS: added automatically, ok -------------------
+	//
+	//item01 := item11
+	//item01.OwnerNSS = ""
+	//item01SavedID, err := recordsOp.Save(item01, &identity)
+	//require.NoError(t, err)
+	//require.NotEmpty(t, item01SavedID)
+	//// require.Equal(t, item01SavedID, authID1)
+	//
+	//item01Saved := item01
+	//item01Saved.ID = item01SavedID
+	//
+	//readOkTest(t, recordsOp, item01Saved, identity)
+
+	// save record, ok -------------------
 
 	item01 := item11
-	item01.OwnerNSS = ""
 	item01SavedID, err := recordsOp.Save(item01, &identity)
 	require.NoError(t, err)
 	require.NotEmpty(t, item01SavedID)
-	require.Equal(t, item01SavedID, authID1)
 
 	item01Saved := item01
 	item01Saved.ID = item01SavedID
+
+	t.Log("ID: ", item01SavedID)
 
 	readOkTest(t, recordsOp, item01Saved, identity)
 
 	// ------------------------------------------------------------------------
 
 	item22Saved := dbTestNoRBAC(t, recordsOp, item11, item12, item22, identity)
+
+	readOkTest(t, recordsOp, item01Saved, identity)
+	readOkTest(t, recordsOp, item22Saved, identity)
 
 	// check .Remove(), .Read(), .List(), -------------------------------------
 
@@ -88,9 +103,13 @@ func dbTestNoRBAC(t *testing.T, recordsOp Operator, itemToSave, itemToUpdate, it
 
 	itemToSave.OwnerNSS = ns.NSS(authID1)
 
+	t.Logf("%#v", itemToSave)
+
 	itemSaved1ID, err := recordsOp.Save(itemToSave, &identity)
 	require.NoError(t, err)
 	require.NotEmpty(t, itemSaved1ID)
+
+	t.Fatal("ID 2: ", itemSaved1ID)
 
 	// TODO!!!
 	// require.Equal(t, itemToSave.Content, itemSaved1.Content)

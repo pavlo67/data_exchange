@@ -15,34 +15,34 @@ import (
 	"github.com/pavlo67/data/entities/persons"
 )
 
-const InterfaceKey joiner.InterfaceKey = "transfer_operator_persons_pack"
+const InterfaceKey joiner.InterfaceKey = "transfer_persons_types01"
 
 func Starter() starter.Operator {
-	return &transferPersonsOperatorPackTypes01Starter{}
+	return &transferPersonsTypes01Starter{}
 }
 
 // ---------------------------------------------------------------------------------
 
 var l logger.Operator
-var _ starter.Operator = &transferPersonsOperatorPackTypes01Starter{}
+var _ starter.Operator = &transferPersonsTypes01Starter{}
 
-type transferPersonsOperatorPackTypes01Starter struct {
+type transferPersonsTypes01Starter struct {
 	personsKey   joiner.InterfaceKey
 	interfaceKey joiner.InterfaceKey
 }
 
-func (tppos *transferPersonsOperatorPackTypes01Starter) Name() string {
+func (tppos *transferPersonsTypes01Starter) Name() string {
 	return logger.GetCallInfo().PackageName
 }
 
-func (tppos *transferPersonsOperatorPackTypes01Starter) Prepare(cfg *config.Config, options common.Map) error {
+func (tppos *transferPersonsTypes01Starter) Prepare(cfg *config.Config, options common.Map) error {
 	tppos.personsKey = joiner.InterfaceKey(options.StringDefault("persons_key", string(persons.InterfaceKey)))
 	tppos.interfaceKey = joiner.InterfaceKey(options.StringDefault("interface_key", string(InterfaceKey)))
 
 	return nil
 }
 
-func (tppos *transferPersonsOperatorPackTypes01Starter) Run(joinerOp joiner.Operator) error {
+func (tppos *transferPersonsTypes01Starter) Run(joinerOp joiner.Operator) error {
 	if l, _ = joinerOp.Interface(logger.InterfaceKey).(logger.Operator); l == nil {
 		return fmt.Errorf("no logger.Operator with key %s", logger.InterfaceKey)
 	}

@@ -6,8 +6,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/pavlo67/common/common"
-	"github.com/pavlo67/common/common/selectors"
-
 	"github.com/pavlo67/data/components/structures"
 )
 
@@ -20,13 +18,13 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 
 	require.NotNil(t, packInitial)
 
-	packURN := packInitial.Description().URN
-	require.NotEmpty(t, packURN)
+	//packURN := packInitial.Description().URN
+	//require.NotEmpty(t, packURN)
 
-	selector := selectors.Term{
-		Key:    structures.InPack,
-		Values: packURN,
-	}
+	//selector := selectors.Term{
+	//	Key:    structures.InPack,
+	//	Values: packURN,
+	//}
 
 	initialDescription := packInitial.Description()
 	require.NotNil(t, initialDescription)
@@ -36,7 +34,7 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 	err = transferOp.In(packInitial, params)
 	require.NoError(t, err)
 
-	statInitial, err := transferOp.Stat(&selector, params)
+	statInitial, err := transferOp.Stat(nil, params)
 	require.NoError(t, err)
 	require.NotNil(t, statInitial)
 
@@ -44,7 +42,7 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 
 	// data export/import and its comparison with initial one ----------------------------
 
-	packRepeat, err := transferOp.Out(&selector, params)
+	packRepeat, err := transferOp.Out(nil, params)
 	require.NoError(t, err)
 	require.NotNil(t, packRepeat)
 
@@ -62,7 +60,7 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 	err = transferOp.In(packRepeat, params)
 	require.NoError(t, err)
 
-	statRepeat, err := transferOp.Stat(&selector, params)
+	statRepeat, err := transferOp.Stat(nil, params)
 	require.NoError(t, err)
 	require.NotNil(t, statRepeat)
 
@@ -72,7 +70,7 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 
 	// data export/import repeat and its comparison with previous one --------------------
 
-	packFinal, err := transferOp.Out(&selector, params)
+	packFinal, err := transferOp.Out(nil, params)
 	require.NoError(t, err)
 	require.NotNil(t, packFinal)
 
@@ -87,13 +85,13 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 	err = transferOp.In(packFinal, params)
 	require.NoError(t, err)
 
-	statFinal, err = transferOp.Stat(&selector, params)
+	statFinal, err = transferOp.Stat(nil, params)
 	require.NoError(t, err)
 	require.NotNil(t, statFinal)
 
 	require.Equal(t, statRepeat, statFinal)
 
-	copyFinal, err = transferOp.Copy(&selector, params)
+	copyFinal, err = transferOp.Copy(nil, params)
 	require.NoError(t, err)
 	require.NotNil(t, copyFinal)
 

@@ -12,8 +12,8 @@ import (
 	"github.com/pavlo67/data/entities/records"
 )
 
-func Testdb(t *testing.T) {
-	_, cfgService, l := apps.PrepareTests(t, "../../../apps/", "test", "records_sqlite.log")
+func TestRecordsSQLite(t *testing.T) {
+	_, cfgService, l := apps.PrepareTests(t, "../../../_environments/", "test", "records_sqlite.log")
 	require.NotNil(t, cfgService)
 
 	components := []starter.Starter{
@@ -26,5 +26,5 @@ func Testdb(t *testing.T) {
 	require.NotNil(t, joinerOp)
 	defer joinerOp.CloseAll()
 
-	records.OperatorTestScenarioNoRBAC(t, joinerOp, l)
+	records.OperatorTestScenarioNoRBAC(t, joinerOp)
 }

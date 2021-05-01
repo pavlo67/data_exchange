@@ -6,36 +6,23 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/pavlo67/common/common"
-
 	"github.com/pavlo67/data/components/ns"
 	"github.com/pavlo67/data/components/vcs"
 )
 
 type ItemDescription struct {
-	Label     string      `json:",omitempty" bson:",omitempty"`
-	Info      common.Map  `json:",omitempty" bson:",omitempty"`
-	Tags      []string    `json:",omitempty" bson:",omitempty"`
 	URN       ns.URN      `json:",omitempty" bson:",omitempty"`
+	Tags      []string    `json:",omitempty" bson:",omitempty"`
 	OwnerNSS  ns.NSS      `json:",omitempty" bson:",omitempty"`
 	ViewerNSS ns.NSS      `json:",omitempty" bson:",omitempty"`
 	History   vcs.History `json:",omitempty" bson:",omitempty"`
 	CreatedAt time.Time   `json:",omitempty" bson:",omitempty"`
 	UpdatedAt *time.Time  `json:",omitempty" bson:",omitempty"`
-
-	// removed to prevent duplication due to saving this info in pack description itself
-	// PackURN   ns.URN      `json:",omitempty" bson:",omitempty"`
 }
 
-func (item *ItemDescription) UnfoldFromJSON(infoBytes, tagsBytes, urnBytes, historyBytes []byte) error {
+func (item *ItemDescription) UnfoldFromJSON(tagsBytes, urnBytes, historyBytes []byte) error {
 	if item == nil {
 		return errors.New("nil ItemDescription to be unfolded")
-	}
-
-	if len(infoBytes) > 0 {
-		if err := json.Unmarshal(infoBytes, &item.Info); err != nil {
-			return errors.Wrapf(err, "can't unmarshal .Info (%s)", infoBytes)
-		}
 	}
 
 	if len(tagsBytes) > 0 {
@@ -57,22 +44,15 @@ func (item *ItemDescription) UnfoldFromJSON(infoBytes, tagsBytes, urnBytes, hist
 	return nil
 }
 
-func (item *ItemDescription) FoldIntoJSON() (infoBytes, tagsBytes, urnBytes, historyBytes []byte, err error) {
+func (item *ItemDescription) FoldIntoJSON() (tagsBytes, urnBytes, historyBytes []byte, err error) {
 	if item == nil {
-		return nil, nil, nil, nil, errors.New("nil persons.Item to be folded")
+		return nil, nil, nil, errors.New("nil persons.Item to be folded")
 	}
 
-	infoBytes = []byte{} // to to satisfy NOT NULL constraint
-	if len(item.Info) > 0 {
-		if infoBytes, err = json.Marshal(item.Info); err != nil {
-			return nil, nil, nil, nil, errors.Wrapf(err, "can't marshal .Info (%#v)", item.Info)
-		}
-	}
-
-	tagsBytes = []byte{} // to to satisfy NOT NULL constraint
+	tagsBytes = []byte{} // to satisfy NOT NULL constraint
 	if len(item.Tags) > 0 {
 		if tagsBytes, err = json.Marshal(item.Tags); err != nil {
-			return nil, nil, nil, nil, errors.Wrapf(err, "can't marshal .Tags (%#v)", item.Tags)
+			return nil, nil, nil, errors.Wrapf(err, "can't marshal .Tags (%#v)", item.Tags)
 		}
 	}
 
@@ -86,9 +66,9 @@ func (item *ItemDescription) FoldIntoJSON() (infoBytes, tagsBytes, urnBytes, his
 	if len(item.History) > 0 {
 		historyBytes, err = json.Marshal(item.History)
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrapf(err, "can't marshal .History(%#v)", item.History)
+			return nil, nil, nil, errors.Wrapf(err, "can't marshal .History(%#v)", item.History)
 		}
 	}
 
-	return infoBytes, tagsBytes, urnBytes, historyBytes, nil
+	return tagsBytes, urnBytes, historyBytes, nil
 }

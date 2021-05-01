@@ -13,7 +13,6 @@ func TestTableStat(t *testing.T) {
 	table := Table{
 		PackDescription: &PackDescription{
 			ItemDescription: ItemDescription{
-				Label:     "abc",
 				CreatedAt: time.Now(),
 			},
 			Fields: []Field{

@@ -5,13 +5,11 @@ CREATE TABLE persons (
   nickname     TEXT       NOT NULL,
   email        TEXT               ,
   roles        TEXT       NOT NULL,
+  info         TEXT       NOT NULL,
   creds        TEXT       NOT NULL,
 
-  label        TEXT       NOT NULL,
-  info         TEXT       NOT NULL,
+  urn          TEXT       NOT NULL  DEFAULT ('person' || strftime('%s', 'now')),
   tags         TEXT       NOT NULL,
-  urn          TEXT               ,
-  pack_urn     TEXT       NOT NULL,
   owner_nss    TEXT       NOT NULL,
   viewer_nss   TEXT       NOT NULL,
   history      TEXT       NOT NULL,
@@ -22,4 +20,3 @@ CREATE TABLE persons (
 CREATE UNIQUE INDEX idx_persons_email    ON persons(email)    WHERE email IS NOT NULL;
 CREATE UNIQUE INDEX idx_persons_urn      ON persons(urn)      WHERE urn   IS NOT NULL;
 CREATE        INDEX idx_persons_nickname ON persons(nickname);
-CREATE        INDEX idx_persons_pack_urn ON persons(pack_urn);

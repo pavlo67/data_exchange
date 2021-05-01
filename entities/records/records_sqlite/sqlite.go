@@ -4,12 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/pavlo67/common/common/strlib"
+	"github.com/pavlo67/data/components/ns"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/pavlo67/common/common/strlib"
-	"github.com/pavlo67/data/components/ns"
 
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/auth"
@@ -21,13 +20,15 @@ import (
 	"github.com/pavlo67/data/entities/records"
 )
 
-var fieldsToInsert = []string{"title", "summary", "type_key", "data", "embedded", "tags", "urn", "owner_id", "viewer_id", "history"}
+var fields = []string{"title", "summary", "type_key", "data", "embedded", "tags", "owner_nss", "viewer_nss", "history"}
+
+var fieldsToInsert = append(fields, "urn")
 var fieldsToInsertStr = strings.Join(fieldsToInsert, ", ")
 
-var fieldsToUpdate = append(fieldsToInsert, "updated_at")
+var fieldsToUpdate = append(fields, "updated_at")
 var fieldsToUpdateStr = strings.Join(fieldsToUpdate, " = ?, ") + " = ?"
 
-var fieldsToRead = append(fieldsToUpdate, "created_at")
+var fieldsToRead = append(fields, "urn", "updated_at", "created_at")
 var fieldsToReadStr = strings.Join(fieldsToRead, ", ")
 
 var fieldsToList = append(fieldsToRead, "id")
@@ -39,8 +40,8 @@ type recordsSQLite struct {
 	db    *sql.DB
 	table string
 
-	sqlInsert, sqlUpdate, sqlRead, sqlRemove, sqlClean string
-	stmInsert, stmUpdate, stmRead, stmRemove, stmClean *sql.Stmt
+	sqlInsert, sqlUpdate, sqlRead, sqlRemove, sqlStat, sqlClean string
+	stmInsert, stmUpdate, stmRead, stmRemove, stmStat, stmClean *sql.Stmt
 }
 
 const onNew = "on recordsSQLite.New(): "
@@ -54,10 +55,11 @@ func New(db *sql.DB, table string) (records.Operator, db.Cleaner, error) {
 		db:    db,
 		table: table,
 
-		sqlInsert: "INSERT INTO " + table + " (" + fieldsToInsertStr + ") VALUES (" + strings.Repeat(",? ", len(fieldsToInsert))[1:] + ")",
+		sqlInsert: "INSERT OR REPLACE INTO " + table + " (" + fieldsToInsertStr + ") VALUES (" + strings.Repeat(",? ", len(fieldsToInsert))[1:] + ")",
 		sqlUpdate: "UPDATE " + table + " SET " + fieldsToUpdateStr + " WHERE id = ?",
 		sqlRemove: "DELETE FROM " + table + " where id = ?",
 		sqlRead:   "SELECT " + fieldsToReadStr + " FROM " + table + " WHERE id = ?",
+		sqlStat:   "SELECT COUNT(*) FROM " + table,
 
 		sqlClean: "DELETE FROM " + table,
 	}
@@ -67,6 +69,7 @@ func New(db *sql.DB, table string) (records.Operator, db.Cleaner, error) {
 		{&recordsOp.stmUpdate, recordsOp.sqlUpdate},
 		{&recordsOp.stmRead, recordsOp.sqlRead},
 		{&recordsOp.stmRemove, recordsOp.sqlRemove},
+		{&recordsOp.stmStat, recordsOp.sqlStat},
 		{&recordsOp.stmClean, recordsOp.sqlClean},
 	}
 
@@ -80,16 +83,6 @@ func New(db *sql.DB, table string) (records.Operator, db.Cleaner, error) {
 }
 
 const onSave = "on recordsSQLite.Save(): "
-
-//Save(Item, *auth.Identity) (ID, error)
-//Read(ID, *auth.Identity) (*Item, error)
-//Remove(ID, *auth.Identity) error
-//
-//
-//
-//Tags(*auth.Identity) (tags.StatMap, error)
-//AddParent(ts []tags.Item, id ID) ([]tags.Item, error)
-//
 
 func (recordsOp *recordsSQLite) Save(item records.Item, identity *auth.Identity) (records.ID, error) {
 
@@ -110,36 +103,29 @@ func (recordsOp *recordsSQLite) Save(item records.Item, identity *auth.Identity)
 	var err error
 
 	embeddedBytes := []byte{} // to satisfy NOT NULL constraint
-	if len(item.Content.Embedded) > 0 {
-		if embeddedBytes, err = json.Marshal(item.Content.Embedded); err != nil {
-			return "", errors.Wrapf(err, onSave+"can't marshal .Embedded(%#v)", item.Content.Embedded)
+	if len(item.Embedded) > 0 {
+		if embeddedBytes, err = json.Marshal(item.Embedded); err != nil {
+			return "", errors.Wrapf(err, onSave+"can't marshal .Embedded(%#v)", item.Embedded)
 		}
 	}
 
-	tagsBytes := []byte{} // to to satisfy NOT NULL constraint
-	if len(item.Tags) > 0 {
-		if tagsBytes, err = json.Marshal(item.Tags); err != nil {
-			return "", errors.Wrapf(err, onSave+"can't marshal .Tags(%#v)", item.Tags)
-		}
+	tagsBytes, urnBytes, historyBytes, err := item.ItemDescription.FoldIntoJSON()
+	if err != nil {
+		return "", errors.CommonError(err, onSave)
 	}
 
 	// TODO!!! append to .History
 
-	historyBytes := []byte{} // to satisfy NOT NULL constraint
-	if len(item.History) > 0 {
-		historyBytes, err = json.Marshal(item.History)
-		if err != nil {
-			return "", errors.Wrapf(err, onSave+"can't marshal .History(%#v)", item.History)
-		}
-	}
+	// "title", "summary", "type_key", "data", "embedded",
+	// "urn", "tags", "owner_nss", "viewer_nss", "history"
 
-	// "title", "summary", "type_key", "data", "embedded", "tags",
-	// "urn", "owner_id", "viewer_id", "history"
 	values := []interface{}{
-		item.Content.Title, item.Content.Summary, item.Content.TypeKey, item.Content.Data, embeddedBytes, tagsBytes,
-		item.URN, item.OwnerNSS, item.ViewerNSS, historyBytes}
+		item.Content.Title, item.Content.Summary, item.Content.Type, item.Content.Data, embeddedBytes,
+		tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes}
 
 	if item.ID == "" {
+		values = append(values, urnBytes)
+
 		res, err := recordsOp.stmInsert.Exec(values...)
 		if err != nil {
 			return "", errors.Wrapf(err, onSave+sqllib.CantExec, recordsOp.sqlInsert, strlib.Stringify(values))
@@ -149,11 +135,15 @@ func (recordsOp *recordsSQLite) Save(item records.Item, identity *auth.Identity)
 		if err != nil {
 			return "", errors.Wrapf(err, onSave+sqllib.CantGetLastInsertId, recordsOp.sqlInsert, strlib.Stringify(values))
 		}
+
+		// l.Fatalf("%#v", idSQLite)
+
 		return records.ID(strconv.FormatInt(idSQLite, 10)), nil
 
 	}
 
 	values = append(values, time.Now().Format(time.RFC3339), item.ID)
+
 	if _, err := recordsOp.stmUpdate.Exec(values...); err != nil {
 		return "", errors.Wrapf(err, onSave+sqllib.CantExec, recordsOp.sqlUpdate, strlib.Stringify(values))
 	}
@@ -171,35 +161,27 @@ func (recordsOp *recordsSQLite) Read(id records.ID, options *auth.Identity) (*re
 
 	item := records.Item{ID: id}
 
-	var embeddedBytes, tagsBytes, historyBytes []byte
+	var embeddedBytes, urnBytes, tagsBytes, historyBytes []byte
 
-	// "title", "summary", "type_key", "data", "embedded", "tags",
-	// "urn", "owner_id", "viewer_id", "history", "updated_at", "created_at"
+	// "title", "summary", "type_key", "data", "embedded",
+	// "urn", "tags", "owner_nss", "viewer_nss", "history", "updated_at", "created_at"
 
 	if err = recordsOp.stmRead.QueryRow(idNum).Scan(
-		&item.Content.Title, &item.Content.Summary, &item.Content.TypeKey, &item.Content.Data, &embeddedBytes, &tagsBytes,
-		&item.URN, &item.OwnerNSS, &item.ViewerNSS, &historyBytes, &item.UpdatedAt, &item.CreatedAt); err == sql.ErrNoRows {
+		&item.Content.Title, &item.Content.Summary, &item.Content.Type, &item.Content.Data, &embeddedBytes,
+		&tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes, &urnBytes, &item.UpdatedAt, &item.CreatedAt); err == sql.ErrNoRows {
 		return nil, common.ErrNotFound
 	} else if err != nil {
 		return nil, errors.Wrapf(err, onRead+sqllib.CantScanQueryRow, recordsOp.sqlRead, idNum)
 	}
 
 	if len(embeddedBytes) > 0 {
-		if err = json.Unmarshal(embeddedBytes, &item.Content.Embedded); err != nil {
+		if err = json.Unmarshal(embeddedBytes, &item.Embedded); err != nil {
 			return &item, errors.Wrapf(err, onRead+"can't unmarshal .Embedded (%s)", embeddedBytes)
 		}
 	}
 
-	if len(tagsBytes) > 0 {
-		if err = json.Unmarshal(tagsBytes, &item.Tags); err != nil {
-			return &item, errors.Wrapf(err, onRead+"can't unmarshal .Tags (%s)", tagsBytes)
-		}
-	}
-
-	if len(historyBytes) > 0 {
-		if err = json.Unmarshal(historyBytes, &item.History); err != nil {
-			return &item, errors.Wrapf(err, onRead+"can't unmarshal .History (%s)", historyBytes)
-		}
+	if err = item.ItemDescription.UnfoldFromJSON(tagsBytes, urnBytes, historyBytes); err != nil {
+		return nil, errors.CommonError(err, onSave)
 	}
 
 	return &item, nil
@@ -252,35 +234,27 @@ func (recordsOp *recordsSQLite) List(selector *selectors.Term, identity *auth.Id
 	for rows.Next() {
 		var idNum int64
 		var item records.Item
-		var embeddedBytes, tagsBytes, historyBytes []byte
+		var embeddedBytes, urnBytes, tagsBytes, historyBytes []byte
 
-		// "title", "summary", "type_key", "data", "embedded", "tags",
-		// "urn", "owner_id", "viewer_id", "history", "updated_at", "created_at",
+		// "title", "summary", "type_key", "data", "embedded",
+		// "urn", "tags", "owner_nss", "viewer_nss", "history", "updated_at", "created_at"
 		// "id"
 
 		if err := rows.Scan(
-			&item.Content.Title, &item.Content.Summary, &item.Content.TypeKey, &item.Content.Data, &embeddedBytes, &tagsBytes,
-			&item.URN, &item.OwnerNSS, &item.ViewerNSS, &historyBytes, &item.UpdatedAt, &item.CreatedAt,
+			&item.Content.Title, &item.Content.Summary, &item.Content.Type, &item.Content.Data, &embeddedBytes,
+			&tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes, &urnBytes, &item.UpdatedAt, &item.CreatedAt,
 			&idNum); err != nil {
 			return items, errors.Wrapf(err, onList+": "+sqllib.CantScanQueryRow, query, values)
 		}
 
 		if len(embeddedBytes) > 0 {
-			if err = json.Unmarshal(embeddedBytes, &item.Content.Embedded); err != nil {
+			if err = json.Unmarshal(embeddedBytes, &item.Embedded); err != nil {
 				return items, errors.Wrapf(err, onList+": can't unmarshal .Embedded (%s)", embeddedBytes)
 			}
 		}
 
-		if len(tagsBytes) > 0 {
-			if err = json.Unmarshal(tagsBytes, &item.Tags); err != nil {
-				return items, errors.Wrapf(err, onList+": can't unmarshal .Tags (%s)", tagsBytes)
-			}
-		}
-
-		if len(historyBytes) > 0 {
-			if err = json.Unmarshal(historyBytes, &item.History); err != nil {
-				return items, errors.Wrapf(err, onList+": can't unmarshal .History (%s)", historyBytes)
-			}
+		if err = item.ItemDescription.UnfoldFromJSON(tagsBytes, urnBytes, historyBytes); err != nil {
+			return nil, errors.CommonError(err, onSave)
 		}
 
 		item.ID = records.ID(strconv.FormatInt(idNum, 10))
@@ -354,10 +328,18 @@ func (recordsOp *recordsSQLite) Close() error {
 	return errors.Wrap(recordsOp.db.Close(), "on recordsSQLite.Close()")
 }
 
-const onStat = "on recordsSQLite.StatMap(): "
+const onStat = "on recordsSQLite.Stat(): "
 
 func (recordsOp *recordsSQLite) Stat(*selectors.Term, *auth.Identity) (db.StatMap, error) {
-	return nil, common.ErrNotImplemented
+	var num int
+	if err := recordsOp.stmStat.QueryRow().Scan(&num); err == sql.ErrNoRows {
+		return nil, errors.CommonError(common.ErrNotFound, onStat)
+	} else if err != nil {
+		return nil, errors.Wrapf(err, onStat+sqllib.CantScanQueryRow, recordsOp.sqlStat, nil)
+	}
+
+	return db.StatMap{"*": db.Stat{num}}, nil
+
 	//	condition, values, err := selectors_sql.Use(term)
 	//	if err != nil {
 	//		termStr, _ := json.Marshal(term)

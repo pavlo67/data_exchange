@@ -74,8 +74,8 @@ func (transferOp *transferPersonsTypes01) In(pack structures.Pack, params common
 				Nickname: person01.Nickname,
 				Roles:    person01.Roles,
 			},
+			Info:            person01.Info,
 			ItemDescription: person01.ItemDescription,
-			InPackURN:       pack.Description().URN,
 		}
 		personItem.SetCreds(person01.Creds)
 
@@ -112,6 +112,7 @@ func (transferOp *transferPersonsTypes01) Out(selector *selectors.Term, params c
 			Nickname:        personsItem.Nickname,
 			Roles:           personsItem.Roles,
 			Creds:           personsItem.Creds(),
+			Info:            personsItem.Info,
 			ItemDescription: personsItem.ItemDescription,
 		})
 	}

@@ -3,12 +3,12 @@ package records
 import (
 	"testing"
 
-	"github.com/pavlo67/data/components/structures"
-
-	"github.com/pavlo67/data/components/tags"
+	"github.com/stretchr/testify/require"
 
 	"github.com/pavlo67/common/common/auth"
-	"github.com/stretchr/testify/require"
+
+	"github.com/pavlo67/data/components/structures"
+	"github.com/pavlo67/data/components/tags"
 )
 
 const authID1 = auth.ID("1")
@@ -19,22 +19,21 @@ const testNewTag = "testNewTag"
 
 var embedded = []Content{
 	{
-		Title:    "56567",
-		Summary:  "3333333",
-		TypeKey:  "test...",
-		Data:     "wqerwer",
-		Embedded: []Content{{Data: "werwe"}},
+		Title:   "56567",
+		Summary: "3333333",
+		Type:    "test...",
+		Data:    "wqerwer",
 	},
 }
 
 var item11 = Item{
 	Content: Content{
-		Title:    "345456",
-		Summary:  "6578gj",
-		TypeKey:  "test",
-		Embedded: embedded,
-		Data:     `{"AAA": "aaa", "BBB": 222}`,
+		Title:   "345456",
+		Summary: "6578gj",
+		Type:    "test",
+		Data:    `{"AAA": "aaa", "BBB": 222}`,
 	},
+	Embedded: embedded,
 	ItemDescription: structures.ItemDescription{
 		Tags: []tags.Item{"1", "333"},
 	},
@@ -44,7 +43,7 @@ var item12 = Item{
 	Content: Content{
 		Title:   "345eeeee456rt",
 		Summary: "6578eegj",
-		TypeKey: "test1",
+		Type:    "test1",
 		Data:    `{"AAA": "awraa", "BBB": 22552}`,
 	},
 	ItemDescription: structures.ItemDescription{
@@ -54,12 +53,12 @@ var item12 = Item{
 
 var item22 = Item{
 	Content: Content{
-		Title:    "34545ee6rt",
-		Summary:  "6578weqreegj",
-		TypeKey:  "test2",
-		Data:     `wqerwer`,
-		Embedded: append(embedded, embedded...),
+		Title:   "34545ee6rt",
+		Summary: "6578weqreegj",
+		Type:    "test2",
+		Data:    `wqerwer`,
 	},
+	Embedded: append(embedded, embedded...),
 	ItemDescription: structures.ItemDescription{
 		Tags: []tags.Item{"qw1", "333"},
 	},
@@ -72,8 +71,8 @@ func readOkTest(t *testing.T, recordsOp Operator, item Item, identity auth.Ident
 
 	require.Equal(t, item.ID, itemReaded.ID)
 	require.Equal(t, item.Content, itemReaded.Content)
-	require.Equal(t, item.OwnerNSS, itemReaded.OwnerNSS)
-	require.Equal(t, item.ViewerNSS, itemReaded.ViewerNSS)
+	//require.Equal(t, item.OwnerNSS, itemReaded.OwnerNSS)
+	//require.Equal(t, item.ViewerNSS, itemReaded.ViewerNSS)
 
 	items, err := recordsOp.List(nil, &identity)
 	require.NoError(t, err)
@@ -84,8 +83,8 @@ func readOkTest(t *testing.T, recordsOp Operator, item Item, identity auth.Ident
 			found = true
 			require.Equal(t, item.ID, itemListed.ID)
 			require.Equal(t, item.Content, itemListed.Content)
-			require.Equal(t, item.OwnerNSS, itemListed.OwnerNSS)
-			require.Equal(t, item.ViewerNSS, itemListed.ViewerNSS)
+			//require.Equal(t, item.OwnerNSS, itemListed.OwnerNSS)
+			//require.Equal(t, item.ViewerNSS, itemListed.ViewerNSS)
 		}
 	}
 	require.Truef(t, found, "%#v", items)

@@ -1,6 +1,7 @@
 package persons_sqlite
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -14,8 +15,8 @@ import (
 )
 
 func TestPersonsSQLite(t *testing.T) {
-	//err := os.Setenv("SHOW_CONNECTS", "1")
-	//require.NoError(t, err)
+	err := os.Setenv("SHOW_CONNECTS", "1")
+	require.NoError(t, err)
 
 	_, cfgService, l := apps.PrepareTests(
 		t,

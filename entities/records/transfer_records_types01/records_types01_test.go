@@ -1,4 +1,4 @@
-package transfer_persons_types01
+package transfer_records_types01
 
 import (
 	"fmt"
@@ -11,23 +11,21 @@ import (
 
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/apps"
-	"github.com/pavlo67/common/common/auth"
 	"github.com/pavlo67/common/common/db"
 	"github.com/pavlo67/common/common/db/db_sqlite"
-	"github.com/pavlo67/common/common/rbac"
 	"github.com/pavlo67/common/common/starter"
 
 	"github.com/pavlo67/data/components/ns"
 	"github.com/pavlo67/data/components/structures"
 	"github.com/pavlo67/data/components/transfer"
 
-	"github.com/pavlo67/data/entities/persons"
-	"github.com/pavlo67/data/entities/persons/persons_sqlite"
+	"github.com/pavlo67/data/entities/records"
+	"github.com/pavlo67/data/entities/records/records_sqlite"
 
 	"github.com/pavlo67/data/exchange/types01"
 )
 
-func TestTransferPersonsTypes01(t *testing.T) {
+func TestTransferRecordsTypes01(t *testing.T) {
 	err := os.Setenv("SHOW_CONNECTS", "1")
 	require.NoError(t, err)
 
@@ -35,22 +33,22 @@ func TestTransferPersonsTypes01(t *testing.T) {
 
 	components := []starter.Starter{
 		{db_sqlite.Starter(), nil},
-		{persons_sqlite.Starter(), nil},
-		{Starter(), common.Map{"persons_cleaner_key": persons.InterfaceCleanerKey}},
+		{records_sqlite.Starter(), nil},
+		{Starter(), common.Map{"records_cleaner_key": records.InterfaceCleanerKey}},
 	}
 
-	label := "PERSONS_OPERATOR_PACK/TEST BUILD"
+	label := "records_OPERATOR_PACK/TEST BUILD"
 	joinerOp, err := starter.Run(components, cfgService, label, l)
 	if err != nil {
 		l.Fatal(err)
 	}
 	defer joinerOp.CloseAll()
 
-	personsOp, _ := joinerOp.Interface(persons.InterfaceKey).(persons.Operator)
-	require.NotNil(t, personsOp)
+	recordsOp, _ := joinerOp.Interface(records.InterfaceKey).(records.Operator)
+	require.NotNil(t, recordsOp)
 
-	personsCleanerOp, _ := joinerOp.Interface(persons.InterfaceCleanerKey).(db.Cleaner)
-	require.NotNil(t, personsCleanerOp)
+	recordsCleanerOp, _ := joinerOp.Interface(records.InterfaceCleanerKey).(db.Cleaner)
+	require.NotNil(t, recordsCleanerOp)
 
 	transferOp, _ := joinerOp.Interface(InterfaceKey).(transfer.Operator)
 	require.NotNil(t, transferOp)
@@ -66,13 +64,22 @@ func TestTransferPersonsTypes01(t *testing.T) {
 				// UpdatedAt: nil,
 			},
 		},
-		PackData: structures.NewDataAny([]types01.Person{
+		PackData: structures.NewDataAny([]types01.Record{
 			{
-				Nickname: "wqerwqer",
-				Roles:    nil,
-				Creds:    auth.Creds{auth.CredsEmail: "aaa@bbb.ccc"},
-				Info:     common.Map{"xxx": "yyy", "zzz": 777.},
-
+				Content: types01.Content{
+					Title:   "qwerwe",
+					Summary: "rftyu",
+					Type:    "wewe",
+					Data:    "truyty",
+				},
+				Embedded: []types01.Content{
+					{
+						Title:   "qwerwe4",
+						Summary: "rftyu444",
+						Type:    "wew4444e",
+						Data:    "truyty4444",
+					},
+				},
 				ItemDescription: structures.ItemDescription{
 					URN: "urn1",
 					// History:   nil,
@@ -81,11 +88,12 @@ func TestTransferPersonsTypes01(t *testing.T) {
 				},
 			},
 			{
-				Nickname: "wqerwqer2",
-				Roles:    rbac.Roles{rbac.RoleUser},
-				Creds:    auth.Creds{auth.CredsEmail: "aaa2@bbb.ccc"},
-				Info:     common.Map{"xxx2": "yyy", "zzz2": 222.},
-
+				Content: types01.Content{
+					Title:   "ert",
+					Summary: "yuuuuuuuu",
+					Type:    "eeee",
+				},
+				Embedded: []types01.Content{},
 				ItemDescription: structures.ItemDescription{
 					URN: "urn2",
 					// History:   nil,
@@ -98,7 +106,7 @@ func TestTransferPersonsTypes01(t *testing.T) {
 
 	var params common.Map
 
-	err = personsCleanerOp.Clean(nil)
+	err = recordsCleanerOp.Clean(nil)
 	require.NoError(t, err)
 
 	// copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, dataInitial, true, false)

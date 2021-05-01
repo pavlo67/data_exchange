@@ -9,8 +9,6 @@ import (
 
 	"github.com/pavlo67/data/components/ns"
 
-	"github.com/pavlo67/data/components/structures"
-
 	"github.com/pavlo67/common/common"
 	"github.com/pavlo67/common/common/auth"
 	"github.com/pavlo67/common/common/db"
@@ -23,7 +21,7 @@ import (
 	"github.com/pavlo67/data/entities/persons"
 )
 
-var fieldsToInsert = []string{"nickname", "email", "roles", "creds", "label", "info", "tags", "urn", "pack_urn", "owner_nss", "viewer_nss", "history"}
+var fieldsToInsert = []string{"nickname", "email", "roles", "info", "creds", "urn", "tags", "owner_nss", "viewer_nss", "history"}
 var fieldsToInsertStr = strings.Join(fieldsToInsert, ", ")
 
 var fieldsToUpdate = append(fieldsToInsert, "updated_at")
@@ -96,12 +94,10 @@ func (personsOp *personsSQLite) Save(item persons.Item, identity *auth.Identity)
 		return "", errors.CommonError(err, onSave)
 	}
 
-	// "nickname", "email", "roles", "creds",
-	// "label", "info", "tags", "urn", "pack_urn", "owner_nss", "viewer_nss", "history"
-	values := []interface{}{
-		item.Nickname, emailBytes, rolesBytes, credsBytes,
-		item.Label, infoBytes, tagsBytes, urnBytes, item.InPackURN, item.OwnerNSS, item.ViewerNSS, historyBytes,
-	}
+	//l.Infof("URN BYTES: %#v", urnBytes)
+
+	// "nickname", "email", "roles", "creds", "info",
+	// "urn", "tags", "owner_nss", "viewer_nss", "history"
 
 	if item.ID != "" {
 		itemOld, err := personsOp.read(item.Identity.ID)
@@ -114,14 +110,27 @@ func (personsOp *personsSQLite) Save(item persons.Item, identity *auth.Identity)
 				return "", errors.CommonError(common.NoRightsKey, common.Map{"on": onSave, "item": item, "requestedRole": rbac.RoleAdmin})
 			}
 		}
+
+		if urnBytes == nil {
+			urnBytes = []byte{}
+		}
 		// ... "updated_at", "id"
-		values = append(values, time.Now(), item.ID)
+		values := []interface{}{
+			item.Nickname, emailBytes, rolesBytes, credsBytes, infoBytes,
+			urnBytes, tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes,
+			time.Now(), item.ID,
+		}
 
 		if _, err = personsOp.stmUpdate.Exec(values...); err != nil {
 			return "", errors.Wrapf(err, onSave+sqllib.CantExec, personsOp.sqlUpdate, strlib.Stringify(values))
 		}
 
 	} else {
+		values := []interface{}{
+			item.Nickname, emailBytes, rolesBytes, credsBytes, infoBytes,
+			urnBytes, tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes,
+		}
+
 		res, err := personsOp.stmInsert.Exec(values...)
 		if err != nil {
 			return "", errors.Wrapf(err, onSave+sqllib.CantExec, personsOp.sqlInsert, strlib.Stringify(values))
@@ -169,13 +178,13 @@ func (personsOp *personsSQLite) read(id auth.ID) (*persons.Item, error) {
 	var item persons.Item
 	var emailBytes, rolesBytes, credsBytes, infoBytes, tagsBytes, urnBytes, historyBytes []byte
 
-	// "nickname", "email", "roles", "creds",
-	// "label", "info", "tags", "urn", "pack_urn", "owner_nss", "viewer_nss", "history"
+	// "nickname", "email", "roles", "creds", "info",
+	// "urn", "tags", "owner_nss", "viewer_nss", "history"
 	// "updated_at", "created_at", "id"
 
 	if err = personsOp.stmRead.QueryRow(idNum).Scan(
-		&item.Nickname, &emailBytes, &rolesBytes, &credsBytes,
-		&item.Label, &infoBytes, &tagsBytes, &urnBytes, &item.InPackURN, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
+		&item.Nickname, &emailBytes, &rolesBytes, &credsBytes, &infoBytes,
+		&urnBytes, &tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
 		&item.UpdatedAt, &item.CreatedAt,
 	); err == sql.ErrNoRows {
 		return nil, errors.CommonError(common.ErrNotFound, onread)
@@ -241,13 +250,6 @@ func (personsOp *personsSQLite) List(selector *selectors.Term, identity *auth.Id
 			condition = `nickname = ?`
 			values = []interface{}{valuesStr[0]}
 
-		case structures.InPack:
-			if len(valuesStr) != 1 {
-				return nil, fmt.Errorf(onList+": wrong values list in selector: %#v / %#v", selector, valuesStr)
-			}
-			condition = `pack_urn = ?`
-			values = []interface{}{valuesStr[0]}
-
 		default:
 			return nil, fmt.Errorf(onList+": wrong selector.Key: %#v", selector)
 		}
@@ -275,13 +277,13 @@ func (personsOp *personsSQLite) List(selector *selectors.Term, identity *auth.Id
 
 		var emailBytes, rolesBytes, credsBytes, infoBytes, tagsBytes, urnBytes, historyBytes []byte
 
-		// "nickname", "email", "roles", "creds",
-		// "label", "info", "tags", "urn", "pack_urn", "owner_nss", "viewer_nss", "history"
+		// "nickname", "email", "roles", "creds", "info",
+		// "urn", "tags", "owner_nss", "viewer_nss", "history"
 		// "updated_at", "created_at", "id"
 
 		if err := rows.Scan(
-			&item.Nickname, &emailBytes, &rolesBytes, &credsBytes,
-			&item.Label, &infoBytes, &tagsBytes, &urnBytes, &item.InPackURN, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
+			&item.Nickname, &emailBytes, &rolesBytes, &credsBytes, &infoBytes,
+			&urnBytes, &tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
 			&item.UpdatedAt, &item.CreatedAt,
 			&idNum,
 		); err != nil {

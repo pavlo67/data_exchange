@@ -2,9 +2,8 @@ package persons
 
 import (
 	"encoding/json"
+	"github.com/pavlo67/common/common"
 	"strings"
-
-	"github.com/pavlo67/data/components/ns"
 
 	"github.com/pavlo67/common/common/auth"
 	"github.com/pavlo67/common/common/db"
@@ -26,13 +25,11 @@ type Operator interface {
 }
 
 type Item struct {
-	auth.Identity              `json:",inline" bson:",inline"`
+	auth.Identity `           json:",inline"    bson:",inline"`
+	Info          common.Map `json:",omitempty" bson:",omitempty"`
+	creds         auth.Creds `json:",omitempty" bson:",omitempty"` // hidden values
+
 	structures.ItemDescription `json:",inline" bson:",inline"`
-
-	InPackURN ns.URN `json:",omitempty" bson:",omitempty"`
-
-	// hidden values
-	creds auth.Creds `json:",omitempty" bson:",omitempty"`
 }
 
 func (item *Item) UnfoldFromJSON(id auth.ID, rolesBytes, credsBytes, emailBytes, infoBytes, tagsBytes, urnBytes, historyBytes []byte) error {
@@ -62,7 +59,13 @@ func (item *Item) UnfoldFromJSON(id auth.ID, rolesBytes, credsBytes, emailBytes,
 	}
 	item.SetCreds(creds)
 
-	return item.ItemDescription.UnfoldFromJSON(infoBytes, tagsBytes, urnBytes, historyBytes)
+	if len(infoBytes) > 0 {
+		if err := json.Unmarshal(infoBytes, &item.Info); err != nil {
+			return errors.Wrapf(err, "can't unmarshal .Info (%s)", infoBytes)
+		}
+	}
+
+	return item.ItemDescription.UnfoldFromJSON(tagsBytes, urnBytes, historyBytes)
 }
 
 func (item *Item) FoldIntoJSON() (rolesBytes, credsBytes, emailBytes, infoBytes, tagsBytes, historyBytes, urnBytes []byte, err error) {
@@ -88,12 +91,19 @@ func (item *Item) FoldIntoJSON() (rolesBytes, credsBytes, emailBytes, infoBytes,
 	credsBytes = []byte{} // to satisfy NOT NULL constraint
 	if len(creds) > 0 {
 		if credsBytes, err = json.Marshal(creds); err != nil {
-			return nil, nil, nil, nil, nil, nil, nil, errors.Wrapf(err, "can't marshal creds (%#v)", creds)
+			return nil, nil, nil, nil, nil, nil, nil, errors.Wrapf(err, "can't marshal .creds (%#v)", creds)
+		}
+	}
+
+	infoBytes = []byte{} // to satisfy NOT NULL constraint
+	if len(item.Info) > 0 {
+		if infoBytes, err = json.Marshal(item.Info); err != nil {
+			return nil, nil, nil, nil, nil, nil, nil, errors.Wrapf(err, "can't marshal .Info (%#v)", item.Info)
 		}
 	}
 
 	// TODO!!! append to item.History
-	if infoBytes, tagsBytes, urnBytes, historyBytes, err = item.ItemDescription.FoldIntoJSON(); err != nil {
+	if tagsBytes, urnBytes, historyBytes, err = item.ItemDescription.FoldIntoJSON(); err != nil {
 		return nil, nil, nil, nil, nil, nil, nil, err
 	}
 

@@ -1,4 +1,4 @@
-package transformer_json_any
+package transfer_json_any
 
 import (
 	"fmt"
@@ -11,29 +11,29 @@ import (
 	"github.com/pavlo67/common/common/starter"
 )
 
-const InterfaceKey joiner.InterfaceKey = "transform_json_any"
+const InterfaceKey joiner.InterfaceKey = "transfer_json_any"
 
 func Starter() starter.Operator {
-	return &transformJSONAnyStarter{}
+	return &transferJSONAnyStarter{}
 }
 
 // ---------------------------------------------------------------------------------
 
 var l logger.Operator
-var _ starter.Operator = &transformJSONAnyStarter{}
+var _ starter.Operator = &transferJSONAnyStarter{}
 
-type transformJSONAnyStarter struct {
+type transferJSONAnyStarter struct {
 	path           string
 	exemplar       interface{}
 	prefix, indent string
 	interfaceKey   joiner.InterfaceKey
 }
 
-func (tjas *transformJSONAnyStarter) Name() string {
+func (tjas *transferJSONAnyStarter) Name() string {
 	return logger.GetCallInfo().PackageName
 }
 
-func (tjas *transformJSONAnyStarter) Prepare(cfg *config.Config, options common.Map) error {
+func (tjas *transferJSONAnyStarter) Prepare(cfg *config.Config, options common.Map) error {
 	tjas.path = options.StringDefault("path", "")
 	tjas.exemplar = options["exemplar"]
 	tjas.prefix = options.StringDefault("prefix", "")
@@ -44,18 +44,18 @@ func (tjas *transformJSONAnyStarter) Prepare(cfg *config.Config, options common.
 	return nil
 }
 
-func (tjas *transformJSONAnyStarter) Run(joinerOp joiner.Operator) error {
+func (tjas *transferJSONAnyStarter) Run(joinerOp joiner.Operator) error {
 	if l, _ = joinerOp.Interface(logger.InterfaceKey).(logger.Operator); l == nil {
 		return fmt.Errorf("no logger.Operator with key %s", logger.InterfaceKey)
 	}
 
-	transformOp, err := New(tjas.path, tjas.exemplar, tjas.prefix, tjas.indent)
+	transferOp, err := New(tjas.path, tjas.exemplar, tjas.prefix, tjas.indent)
 	if err != nil {
 		return err
 	}
 
-	if err = joinerOp.Join(transformOp, tjas.interfaceKey); err != nil {
-		return errors.CommonError(err, fmt.Sprintf("can't join *transformerJSONAny{} as transform.Operator with key '%s'", tjas.interfaceKey))
+	if err = joinerOp.Join(transferOp, tjas.interfaceKey); err != nil {
+		return errors.CommonError(err, fmt.Sprintf("can't join *transferJSONAny{} as transfer.Operator with key '%s'", tjas.interfaceKey))
 	}
 
 	return nil

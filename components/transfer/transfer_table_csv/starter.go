@@ -1,4 +1,4 @@
-package transformer_table_csv
+package transfer_table_csv
 
 import (
 	"fmt"
@@ -11,43 +11,43 @@ import (
 	"github.com/pavlo67/common/common/starter"
 )
 
-const InterfaceKey joiner.InterfaceKey = "transform_table_csv"
+const InterfaceKey joiner.InterfaceKey = "transfer_table_csv"
 
 func Starter() starter.Operator {
-	return &transformTableCSVStarter{}
+	return &transferTableCSVStarter{}
 }
 
 // ---------------------------------------------------------------------------------
 
 var l logger.Operator
-var _ starter.Operator = &transformTableCSVStarter{}
+var _ starter.Operator = &transferTableCSVStarter{}
 
-type transformTableCSVStarter struct {
+type transferTableCSVStarter struct {
 	interfaceKey joiner.InterfaceKey
 }
 
-func (ttcs *transformTableCSVStarter) Name() string {
+func (ttcs *transferTableCSVStarter) Name() string {
 	return logger.GetCallInfo().PackageName
 }
 
-func (ttcs *transformTableCSVStarter) Prepare(cfg *config.Config, options common.Map) error {
+func (ttcs *transferTableCSVStarter) Prepare(cfg *config.Config, options common.Map) error {
 	ttcs.interfaceKey = joiner.InterfaceKey(options.StringDefault("interface_key", string(InterfaceKey)))
 
 	return nil
 }
 
-func (ttcs *transformTableCSVStarter) Run(joinerOp joiner.Operator) error {
+func (ttcs *transferTableCSVStarter) Run(joinerOp joiner.Operator) error {
 	if l, _ = joinerOp.Interface(logger.InterfaceKey).(logger.Operator); l == nil {
 		return fmt.Errorf("no logger.Operator with key %s", logger.InterfaceKey)
 	}
 
-	transformOp, err := New()
+	transferOp, err := New()
 	if err != nil {
 		return err
 	}
 
-	if err = joinerOp.Join(transformOp, ttcs.interfaceKey); err != nil {
-		return errors.CommonError(err, fmt.Sprintf("can't join *transformTableCSV{} as transform.Operator with key '%s'", ttcs.interfaceKey))
+	if err = joinerOp.Join(transferOp, ttcs.interfaceKey); err != nil {
+		return errors.CommonError(err, fmt.Sprintf("can't join *transferTableCSV{} as transfer.Operator with key '%s'", ttcs.interfaceKey))
 	}
 
 	return nil

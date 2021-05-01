@@ -1,4 +1,4 @@
-package transformer_stdout_any
+package transfer_stdout_any
 
 import (
 	"fmt"
@@ -11,32 +11,32 @@ import (
 	"github.com/pavlo67/common/common/starter"
 )
 
-const InterfaceKey joiner.InterfaceKey = "transform_stdout_any"
+const InterfaceKey joiner.InterfaceKey = "transfer_stdout_any"
 
 const ModeJSON = "json"
 const ModeYAML = "yaml"
 const ModeTabbed = "tabbed"
 
 func Starter() starter.Operator {
-	return &transformStdoutAnyStarter{}
+	return &transferStdoutAnyStarter{}
 }
 
 // ---------------------------------------------------------------------------------
 
 var l logger.Operator
-var _ starter.Operator = &transformStdoutAnyStarter{}
+var _ starter.Operator = &transferStdoutAnyStarter{}
 
-type transformStdoutAnyStarter struct {
+type transferStdoutAnyStarter struct {
 	mode         string
 	path         string
 	interfaceKey joiner.InterfaceKey
 }
 
-func (tsas *transformStdoutAnyStarter) Name() string {
+func (tsas *transferStdoutAnyStarter) Name() string {
 	return logger.GetCallInfo().PackageName
 }
 
-func (tsas *transformStdoutAnyStarter) Prepare(cfg *config.Config, options common.Map) error {
+func (tsas *transferStdoutAnyStarter) Prepare(cfg *config.Config, options common.Map) error {
 	tsas.mode = options.StringDefault("mode", ModeJSON)
 	tsas.path = options.StringDefault("path", "")
 
@@ -45,18 +45,18 @@ func (tsas *transformStdoutAnyStarter) Prepare(cfg *config.Config, options commo
 	return nil
 }
 
-func (tsas *transformStdoutAnyStarter) Run(joinerOp joiner.Operator) error {
+func (tsas *transferStdoutAnyStarter) Run(joinerOp joiner.Operator) error {
 	if l, _ = joinerOp.Interface(logger.InterfaceKey).(logger.Operator); l == nil {
 		return fmt.Errorf("no logger.Operator with key %s", logger.InterfaceKey)
 	}
 
-	transformOp, err := New(tsas.mode, tsas.path)
+	transferOp, err := New(tsas.mode, tsas.path)
 	if err != nil {
 		return err
 	}
 
-	if err = joinerOp.Join(transformOp, tsas.interfaceKey); err != nil {
-		return errors.CommonError(err, fmt.Sprintf("can't join *transformStdoutAny{} as transform.Operator with key '%s'", tsas.interfaceKey))
+	if err = joinerOp.Join(transferOp, tsas.interfaceKey); err != nil {
+		return errors.CommonError(err, fmt.Sprintf("can't join *transferStdoutAny{} as transfer.Operator with key '%s'", tsas.interfaceKey))
 	}
 
 	return nil

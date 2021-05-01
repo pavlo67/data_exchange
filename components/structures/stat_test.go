@@ -11,7 +11,7 @@ import (
 
 func TestTableStat(t *testing.T) {
 	table := Table{
-		PackDescription: PackDescription{
+		PackDescription: &PackDescription{
 			ItemDescription: ItemDescription{
 				Label:     "abc",
 				CreatedAt: time.Now(),

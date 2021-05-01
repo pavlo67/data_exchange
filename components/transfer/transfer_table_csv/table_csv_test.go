@@ -1,4 +1,4 @@
-package transformer_table_csv
+package transfer_table_csv
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"github.com/pavlo67/common/common/apps"
 	"github.com/pavlo67/common/common/starter"
 
-	"github.com/pavlo67/data/components/transformer"
+	"github.com/pavlo67/data/components/transfer"
 )
 
 func TestTransformTableCSV(t *testing.T) {
@@ -29,15 +29,15 @@ func TestTransformTableCSV(t *testing.T) {
 	}
 	defer joinerOp.CloseAll()
 
-	transformOp, _ := joinerOp.Interface(InterfaceKey).(transformer.Operator)
-	require.NotNil(t, transformOp)
+	transferOp, _ := joinerOp.Interface(InterfaceKey).(transfer.Operator)
+	require.NotNil(t, transferOp)
 
 	params := common.Map{
 		"separator": "\t",
 	}
 
 	packInitial := structures.PackAny{
-		PackDescription: structures.PackDescription{
+		PackDescription: &structures.PackDescription{
 			ItemDescription: structures.ItemDescription{
 				URN: "test:test",
 			},
@@ -45,7 +45,7 @@ func TestTransformTableCSV(t *testing.T) {
 		PackData: structures.NewDataAny("as\tdfg r\tt/.jk\nrf\t .j;l'psa tproh\t\n\t\tnkcvbm/.sdgk'erlt;klghl\n;rkth;l"),
 	}
 
-	copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, &packInitial, true, true)
+	copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, &packInitial, true, true)
 
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)
 

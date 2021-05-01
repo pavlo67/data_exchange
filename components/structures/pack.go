@@ -22,7 +22,8 @@ type Data interface {
 }
 
 type Pack interface {
-	Description() PackDescription
+	SetDescription(PackDescription) error
+	Description() *PackDescription
 	Data() Data
 }
 

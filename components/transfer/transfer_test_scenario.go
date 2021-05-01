@@ -1,4 +1,4 @@
-package transformer
+package transfer
 
 import (
 	"testing"
@@ -11,8 +11,8 @@ import (
 	"github.com/pavlo67/data/components/structures"
 )
 
-func TestOperator(t *testing.T, transformOp Operator, params common.Map, packInitial structures.Pack, checkFirstCopy, checkPackDescription bool) (copyFinal, statFinal interface{},
-	outFinal structures.Pack) {
+func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInitial structures.Pack,
+	checkFirstCopy, checkPackDescription bool) (copyFinal, statFinal interface{}, outFinal structures.Pack) {
 
 	var err error
 
@@ -28,32 +28,41 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 		Values: packURN,
 	}
 
+	initialDescription := packInitial.Description()
+	require.NotNil(t, initialDescription)
+
 	// import/stat initial data ----------------------------------------------------------
 
-	err = transformOp.In(packInitial, params)
+	err = transferOp.In(packInitial, params)
 	require.NoError(t, err)
 
-	statInitial, err := transformOp.Stat(&selector, params)
+	statInitial, err := transferOp.Stat(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, statInitial)
 
+	// l.Fatalf("%#v\n\n--> %#v / %#v", packInitial.Data(), statInitial, selector)
+
 	// data export/import and its comparison with initial one ----------------------------
 
-	packRepeat, err := transformOp.Out(&selector, params)
+	packRepeat, err := transferOp.Out(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, packRepeat)
 
+	if checkPackDescription {
+		require.Equal(t, initialDescription, packRepeat.Description())
+	} else {
+		err = packRepeat.SetDescription(*initialDescription)
+		require.NoError(t, err)
+	}
+
 	if checkFirstCopy {
-		if checkPackDescription {
-			require.Equal(t, packInitial.Description(), packRepeat.Description())
-		}
 		require.Equal(t, packInitial.Data(), packRepeat.Data())
 	}
 
-	err = transformOp.In(packRepeat, params)
+	err = transferOp.In(packRepeat, params)
 	require.NoError(t, err)
 
-	statRepeat, err := transformOp.Stat(&selector, params)
+	statRepeat, err := transferOp.Stat(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, statRepeat)
 
@@ -63,28 +72,31 @@ func TestOperator(t *testing.T, transformOp Operator, params common.Map, packIni
 
 	// data export/import repeat and its comparison with previous one --------------------
 
-	packFinal, err := transformOp.Out(&selector, params)
+	packFinal, err := transferOp.Out(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, packFinal)
 
 	if checkPackDescription {
 		require.Equal(t, packRepeat.Description(), packFinal.Description())
+	} else {
+		err = packFinal.SetDescription(*packRepeat.Description())
+		require.NoError(t, err)
 	}
 	require.Equal(t, packRepeat.Data(), packFinal.Data())
-	// require.Equal(t, packRepeat, packFinal)
 
-	err = transformOp.In(packFinal, params)
+	err = transferOp.In(packFinal, params)
 	require.NoError(t, err)
 
-	statFinal, err = transformOp.Stat(&selector, params)
+	statFinal, err = transferOp.Stat(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, statFinal)
 
 	require.Equal(t, statRepeat, statFinal)
 
-	copyFinal, err = transformOp.Copy(&selector, params)
+	copyFinal, err = transferOp.Copy(&selector, params)
 	require.NoError(t, err)
 	require.NotNil(t, copyFinal)
 
 	return copyFinal, statFinal, packFinal
+
 }

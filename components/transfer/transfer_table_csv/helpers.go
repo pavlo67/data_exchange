@@ -1,4 +1,4 @@
-package transformer_table_csv
+package transfer_table_csv
 
 import (
 	"errors"

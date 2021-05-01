@@ -2,6 +2,7 @@ package structures
 
 import (
 	"fmt"
+	"github.com/pavlo67/common/common/errors"
 	"reflect"
 )
 
@@ -20,15 +21,29 @@ func (rows Rows) Value() interface{} {
 }
 
 type Table struct {
-	PackDescription `json:",inline"    bson:",inline"`
-	Rows            `json:",omitempty" bson:",omitempty"`
+	*PackDescription `json:",inline"    bson:",inline"`
+	Rows             `json:",omitempty" bson:",omitempty"`
 }
 
-func (table *Table) Description() PackDescription {
+func (table *Table) SetDescription(packDescription PackDescription) error {
+	if table == nil {
+		return errors.New("no pack to set description")
+	}
+	table.PackDescription = &packDescription
+	return nil
+}
+
+func (table *Table) Description() *PackDescription {
+	if table == nil {
+		return nil
+	}
 	return table.PackDescription
 }
 
 func (table *Table) Data() Data {
+	if table == nil {
+		return nil
+	}
 	return &table.Rows
 }
 

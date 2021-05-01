@@ -15,7 +15,7 @@
 * sender.Operator.Handle, sender.Operator.History
 * мережа довірених адресатів
 
-## transformer
+## transfer
 
 ### json_any
 

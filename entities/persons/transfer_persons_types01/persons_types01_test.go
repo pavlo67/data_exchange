@@ -1,7 +1,8 @@
-package transformer_persons_operator_pack_types01
+package transfer_persons_types01
 
 import (
 	"fmt"
+	"github.com/pavlo67/data/components/transfer"
 	"os"
 	"strconv"
 	"testing"
@@ -19,15 +20,13 @@ import (
 
 	"github.com/pavlo67/data/components/ns"
 	"github.com/pavlo67/data/components/structures"
-	"github.com/pavlo67/data/components/transformer"
-
 	"github.com/pavlo67/data/entities/persons"
 	"github.com/pavlo67/data/entities/persons/persons_sqlite"
 
 	"github.com/pavlo67/data/exchange/types01"
 )
 
-func TestTransformPersonsOperatorPack(t *testing.T) {
+func TestTransferPersonsTypes01k(t *testing.T) {
 	err := os.Setenv("SHOW_CONNECTS", "1")
 	require.NoError(t, err)
 
@@ -52,11 +51,11 @@ func TestTransformPersonsOperatorPack(t *testing.T) {
 	personsCleanerOp, _ := joinerOp.Interface(persons.InterfaceCleanerKey).(db.Cleaner)
 	require.NotNil(t, personsCleanerOp)
 
-	transformOp, _ := joinerOp.Interface(InterfaceKey).(transformer.Operator)
-	require.NotNil(t, transformOp)
+	transferOp, _ := joinerOp.Interface(InterfaceKey).(transfer.Operator)
+	require.NotNil(t, transferOp)
 
 	dataInitial := structures.PackAny{
-		PackDescription: structures.PackDescription{
+		PackDescription: &structures.PackDescription{
 			Fields: structures.Fields{},
 			ItemDescription: structures.ItemDescription{
 				URN:   ns.URN("test:test" + strconv.FormatInt(time.Now().UnixNano(), 10)),
@@ -74,10 +73,10 @@ func TestTransformPersonsOperatorPack(t *testing.T) {
 				Creds:    auth.Creds{auth.CredsEmail: "aaa@bbb.ccc"},
 
 				ItemDescription: structures.ItemDescription{
-					Info: common.Map{"xxx": "yyy", "zzz": 777},
+					Info: common.Map{"xxx": "yyy", "zzz": 777.},
 					URN:  "urn1",
 					// History:   nil,
-					CreatedAt: time.Now(),
+					// CreatedAt: time.Time{},
 					// UpdatedAt: nil,
 				},
 			},
@@ -87,10 +86,10 @@ func TestTransformPersonsOperatorPack(t *testing.T) {
 				Creds:    auth.Creds{auth.CredsEmail: "aaa2@bbb.ccc"},
 
 				ItemDescription: structures.ItemDescription{
-					Info: common.Map{"xxx2": "yyy", "zzz2": 222},
+					Info: common.Map{"xxx2": "yyy", "zzz2": 222.},
 					URN:  "urn2",
 					// History:   nil,
-					CreatedAt: time.Now(),
+					// CreatedAt: time.Time{},
 					// UpdatedAt: nil,
 				},
 			},
@@ -102,20 +101,20 @@ func TestTransformPersonsOperatorPack(t *testing.T) {
 	err = personsCleanerOp.Clean(nil)
 	require.NoError(t, err)
 
-	// copyFinal, statFinal, dataFinal := transformer.TestOperator(t, transformOp, params, dataInitial, true, false)
-	copyFinal, statFinal, dataFinal := TestOperator(t, transformOp, params, dataInitial, false, false)
+	// copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, dataInitial, true, false)
+	copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, &dataInitial, true, false)
 
-	//copyFinal, _ := transformOp.Copy(nil, params)
+	//copyFinal, _ := transferOp.Copy(nil, params)
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)
 
-	//statFinal, _ := transformOp.Stat(nil, params)
+	//statFinal, _ := transferOp.Stat(nil, params)
 	if statFinalStringer, ok := statFinal.(fmt.Stringer); ok {
 		t.Logf("STAT (INTERNAL) FINAL: %s", statFinalStringer.String())
 	} else {
 		t.Logf("STAT (INTERNAL) FINAL: %#v", statFinal)
 	}
 
-	//dataFinal, _ := transformOp.Out(nil, params)
+	//dataFinal, _ := transferOp.Out(nil, params)
 	t.Logf("DATA (OUT) FINAL: %#v", dataFinal)
 
 }

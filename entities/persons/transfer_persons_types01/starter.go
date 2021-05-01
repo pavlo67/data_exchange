@@ -1,4 +1,4 @@
-package transformer_persons_operator_pack_types01
+package transfer_persons_types01
 
 import (
 	"fmt"
@@ -15,34 +15,34 @@ import (
 	"github.com/pavlo67/data/entities/persons"
 )
 
-const InterfaceKey joiner.InterfaceKey = "transformer_operator_persons_pack"
+const InterfaceKey joiner.InterfaceKey = "transfer_operator_persons_pack"
 
 func Starter() starter.Operator {
-	return &transformerPersonsOperatorPackTypes01Starter{}
+	return &transferPersonsOperatorPackTypes01Starter{}
 }
 
 // ---------------------------------------------------------------------------------
 
 var l logger.Operator
-var _ starter.Operator = &transformerPersonsOperatorPackTypes01Starter{}
+var _ starter.Operator = &transferPersonsOperatorPackTypes01Starter{}
 
-type transformerPersonsOperatorPackTypes01Starter struct {
+type transferPersonsOperatorPackTypes01Starter struct {
 	personsKey   joiner.InterfaceKey
 	interfaceKey joiner.InterfaceKey
 }
 
-func (tppos *transformerPersonsOperatorPackTypes01Starter) Name() string {
+func (tppos *transferPersonsOperatorPackTypes01Starter) Name() string {
 	return logger.GetCallInfo().PackageName
 }
 
-func (tppos *transformerPersonsOperatorPackTypes01Starter) Prepare(cfg *config.Config, options common.Map) error {
+func (tppos *transferPersonsOperatorPackTypes01Starter) Prepare(cfg *config.Config, options common.Map) error {
 	tppos.personsKey = joiner.InterfaceKey(options.StringDefault("persons_key", string(persons.InterfaceKey)))
 	tppos.interfaceKey = joiner.InterfaceKey(options.StringDefault("interface_key", string(InterfaceKey)))
 
 	return nil
 }
 
-func (tppos *transformerPersonsOperatorPackTypes01Starter) Run(joinerOp joiner.Operator) error {
+func (tppos *transferPersonsOperatorPackTypes01Starter) Run(joinerOp joiner.Operator) error {
 	if l, _ = joinerOp.Interface(logger.InterfaceKey).(logger.Operator); l == nil {
 		return fmt.Errorf("no logger.Operator with key %s", logger.InterfaceKey)
 	}
@@ -52,13 +52,13 @@ func (tppos *transformerPersonsOperatorPackTypes01Starter) Run(joinerOp joiner.O
 		return fmt.Errorf("no persons.Operator with key %s", tppos.personsKey)
 	}
 
-	transformOp, err := New(personsOp, auth.IdentityWithRoles(rbac.RoleAdmin))
+	transferOp, err := New(personsOp, auth.IdentityWithRoles(rbac.RoleAdmin))
 	if err != nil {
 		return err
 	}
 
-	if err = joinerOp.Join(transformOp, tppos.interfaceKey); err != nil {
-		return errors.CommonError(err, fmt.Sprintf("can't join *transformerOperatorPackPersonsTypes01 as transform.Operator with key '%s'", tppos.interfaceKey))
+	if err = joinerOp.Join(transferOp, tppos.interfaceKey); err != nil {
+		return errors.CommonError(err, fmt.Sprintf("can't join *transferPersonsTypes01 as transfer.Operator with key '%s'", tppos.interfaceKey))
 	}
 
 	return nil

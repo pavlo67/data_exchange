@@ -21,13 +21,15 @@ import (
 	"github.com/pavlo67/data/entities/persons"
 )
 
-var fieldsToInsert = []string{"nickname", "email", "roles", "info", "creds", "urn", "tags", "owner_nss", "viewer_nss", "history"}
+var fields = []string{"nickname", "email", "roles", "info", "creds", "tags", "owner_nss", "viewer_nss", "history"}
+
+var fieldsToInsert = append(fields, "urn")
 var fieldsToInsertStr = strings.Join(fieldsToInsert, ", ")
 
-var fieldsToUpdate = append(fieldsToInsert, "updated_at")
+var fieldsToUpdate = append(fields, "updated_at")
 var fieldsToUpdateStr = strings.Join(fieldsToUpdate, " = ?, ") + " = ?"
 
-var fieldsToRead = append(fieldsToUpdate, "created_at")
+var fieldsToRead = append(fields, "urn", "updated_at", "created_at")
 var fieldsToReadStr = strings.Join(fieldsToRead, ", ")
 
 var fieldsToList = append(fieldsToRead, "id")
@@ -54,7 +56,7 @@ func New(db *sql.DB, table string) (persons.Operator, db.Cleaner, error) {
 		db:    db,
 		table: table,
 
-		sqlInsert: "INSERT OR REPLACE INTO " + table + " (" + fieldsToInsertStr + ") VALUES (" + strings.Repeat(",? ", len(fieldsToInsert))[1:] + ")",
+		sqlInsert: "INSERT INTO " + table + " (" + fieldsToInsertStr + ") VALUES (" + strings.Repeat(",? ", len(fieldsToInsert))[1:] + ")",
 		sqlUpdate: "UPDATE " + table + " SET " + fieldsToUpdateStr + " WHERE id = ?",
 		sqlRemove: "DELETE FROM " + table + " where id = ?",
 		sqlRead:   "SELECT " + fieldsToReadStr + " FROM " + table + " WHERE id = ?",
@@ -111,13 +113,10 @@ func (personsOp *personsSQLite) Save(item persons.Item, identity *auth.Identity)
 			}
 		}
 
-		if urnBytes == nil {
-			urnBytes = []byte{}
-		}
 		// ... "updated_at", "id"
 		values := []interface{}{
 			item.Nickname, emailBytes, rolesBytes, credsBytes, infoBytes,
-			urnBytes, tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes,
+			tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes,
 			time.Now(), item.ID,
 		}
 
@@ -128,7 +127,8 @@ func (personsOp *personsSQLite) Save(item persons.Item, identity *auth.Identity)
 	} else {
 		values := []interface{}{
 			item.Nickname, emailBytes, rolesBytes, credsBytes, infoBytes,
-			urnBytes, tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes,
+			tagsBytes, item.OwnerNSS, item.ViewerNSS, historyBytes,
+			urnBytes,
 		}
 
 		res, err := personsOp.stmInsert.Exec(values...)
@@ -179,12 +179,14 @@ func (personsOp *personsSQLite) read(id auth.ID) (*persons.Item, error) {
 	var emailBytes, rolesBytes, credsBytes, infoBytes, tagsBytes, urnBytes, historyBytes []byte
 
 	// "nickname", "email", "roles", "creds", "info",
-	// "urn", "tags", "owner_nss", "viewer_nss", "history"
+	// "tags", "owner_nss", "viewer_nss", "history"
+	// "urn",
 	// "updated_at", "created_at", "id"
 
 	if err = personsOp.stmRead.QueryRow(idNum).Scan(
 		&item.Nickname, &emailBytes, &rolesBytes, &credsBytes, &infoBytes,
-		&urnBytes, &tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
+		&tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
+		&urnBytes,
 		&item.UpdatedAt, &item.CreatedAt,
 	); err == sql.ErrNoRows {
 		return nil, errors.CommonError(common.ErrNotFound, onread)
@@ -278,12 +280,14 @@ func (personsOp *personsSQLite) List(selector *selectors.Term, identity *auth.Id
 		var emailBytes, rolesBytes, credsBytes, infoBytes, tagsBytes, urnBytes, historyBytes []byte
 
 		// "nickname", "email", "roles", "creds", "info",
-		// "urn", "tags", "owner_nss", "viewer_nss", "history"
+		// "tags", "owner_nss", "viewer_nss", "history"
+		// "urn",
 		// "updated_at", "created_at", "id"
 
 		if err := rows.Scan(
 			&item.Nickname, &emailBytes, &rolesBytes, &credsBytes, &infoBytes,
-			&urnBytes, &tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
+			&tagsBytes, &item.OwnerNSS, &item.ViewerNSS, &historyBytes,
+			&urnBytes,
 			&item.UpdatedAt, &item.CreatedAt,
 			&idNum,
 		); err != nil {

@@ -8,7 +8,7 @@ CREATE TABLE records (
   data         TEXT       NOT NULL,
   embedded     TEXT       NOT NULL,
 
-  urn          TEXT       NOT NULL  DEFAULT ('record' || strftime('%s', 'now')),
+  urn          TEXT               ,
   tags         TEXT       NOT NULL,
   owner_nss    TEXT       NOT NULL,
   viewer_nss   TEXT       NOT NULL,

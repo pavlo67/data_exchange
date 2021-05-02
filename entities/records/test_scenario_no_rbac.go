@@ -109,8 +109,6 @@ func dbTestNoRBAC(t *testing.T, recordsOp Operator, itemToSave, itemToUpdate, it
 	require.NoError(t, err)
 	require.NotEmpty(t, itemSaved1ID)
 
-	t.Fatal("ID 2: ", itemSaved1ID)
-
 	// TODO!!!
 	// require.Equal(t, itemToSave.Content, itemSaved1.Content)
 

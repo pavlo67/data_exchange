@@ -1,6 +1,7 @@
 package transfer
 
 import (
+	"github.com/pavlo67/common/common/db"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -9,7 +10,7 @@ import (
 	"github.com/pavlo67/data/components/structures"
 )
 
-func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInitial structures.Pack,
+func TestOperator(t *testing.T, cleanerOp db.Cleaner, transferOp Operator, params common.Map, packInitial structures.Pack,
 	checkFirstCopy, checkPackDescription bool) (copyFinal, statFinal interface{}, outFinal structures.Pack) {
 
 	var err error
@@ -28,6 +29,13 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 
 	initialDescription := packInitial.Description()
 	require.NotNil(t, initialDescription)
+
+	// clean -----------------------------------------------------------------------------
+
+	if cleanerOp != nil {
+		err = cleanerOp.Clean(nil)
+		require.NoError(t, err)
+	}
 
 	// import/stat initial data ----------------------------------------------------------
 
@@ -57,6 +65,15 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 		require.Equal(t, packInitial.Data(), packRepeat.Data())
 	}
 
+	// clean -----------------------------------------------------------------------------
+
+	if cleanerOp != nil {
+		err = cleanerOp.Clean(nil)
+		require.NoError(t, err)
+	}
+
+	// .In again -------------------------------------------------------------------------
+
 	err = transferOp.In(packRepeat, params)
 	require.NoError(t, err)
 
@@ -81,6 +98,15 @@ func TestOperator(t *testing.T, transferOp Operator, params common.Map, packInit
 		require.NoError(t, err)
 	}
 	require.Equal(t, packRepeat.Data(), packFinal.Data())
+
+	// clean -----------------------------------------------------------------------------
+
+	if cleanerOp != nil {
+		err = cleanerOp.Clean(nil)
+		require.NoError(t, err)
+	}
+
+	// ------------------------------------------------------------------------------------
 
 	err = transferOp.In(packFinal, params)
 	require.NoError(t, err)

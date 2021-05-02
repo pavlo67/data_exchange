@@ -8,7 +8,7 @@ CREATE TABLE persons (
   info         TEXT       NOT NULL,
   creds        TEXT       NOT NULL,
 
-  urn          TEXT       NOT NULL  DEFAULT ('person' || strftime('%s', 'now')),
+  urn          TEXT               ,
   tags         TEXT       NOT NULL,
   owner_nss    TEXT       NOT NULL,
   viewer_nss   TEXT       NOT NULL,

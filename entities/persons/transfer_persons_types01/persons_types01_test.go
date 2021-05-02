@@ -70,11 +70,11 @@ func TestTransferPersonsTypes01(t *testing.T) {
 			{
 				Nickname: "wqerwqer",
 				Roles:    nil,
-				Creds:    auth.Creds{auth.CredsEmail: "aaa@bbb.ccc"},
+				Creds:    auth.Creds{}, // auth.CredsEmail: "aaa@bbb.ccc"
 				Info:     common.Map{"xxx": "yyy", "zzz": 777.},
 
 				ItemDescription: structures.ItemDescription{
-					URN: "urn1",
+					// URN: "urn1",
 					// History:   nil,
 					// CreatedAt: time.Time{},
 					// UpdatedAt: nil,
@@ -83,11 +83,11 @@ func TestTransferPersonsTypes01(t *testing.T) {
 			{
 				Nickname: "wqerwqer2",
 				Roles:    rbac.Roles{rbac.RoleUser},
-				Creds:    auth.Creds{auth.CredsEmail: "aaa2@bbb.ccc"},
+				Creds:    auth.Creds{}, // auth.CredsEmail: "aaa2@bbb.ccc"
 				Info:     common.Map{"xxx2": "yyy", "zzz2": 222.},
 
 				ItemDescription: structures.ItemDescription{
-					URN: "urn2",
+					// URN: "urn2",
 					// History:   nil,
 					// CreatedAt: time.Time{},
 					// UpdatedAt: nil,
@@ -98,11 +98,9 @@ func TestTransferPersonsTypes01(t *testing.T) {
 
 	var params common.Map
 
-	err = personsCleanerOp.Clean(nil)
-	require.NoError(t, err)
-
 	// copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, dataInitial, true, false)
-	copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, &dataInitial, true, false)
+	copyFinal, statFinal, dataFinal := transfer.TestOperator(
+		t, personsCleanerOp, transferOp, params, &dataInitial, true, false)
 
 	//copyFinal, _ := transferOp.Copy(nil, params)
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)

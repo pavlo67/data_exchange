@@ -55,7 +55,7 @@ func New(db *sql.DB, table string) (records.Operator, db.Cleaner, error) {
 		db:    db,
 		table: table,
 
-		sqlInsert: "INSERT OR REPLACE INTO " + table + " (" + fieldsToInsertStr + ") VALUES (" + strings.Repeat(",? ", len(fieldsToInsert))[1:] + ")",
+		sqlInsert: "INSERT INTO " + table + " (" + fieldsToInsertStr + ") VALUES (" + strings.Repeat(",? ", len(fieldsToInsert))[1:] + ")",
 		sqlUpdate: "UPDATE " + table + " SET " + fieldsToUpdateStr + " WHERE id = ?",
 		sqlRemove: "DELETE FROM " + table + " where id = ?",
 		sqlRead:   "SELECT " + fieldsToReadStr + " FROM " + table + " WHERE id = ?",

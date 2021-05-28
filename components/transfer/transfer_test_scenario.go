@@ -11,7 +11,7 @@ import (
 )
 
 func TestOperator(t *testing.T, cleanerOp db.Cleaner, transferOp Operator, params common.Map, packInitial structures.Pack,
-	checkFirstCopy, checkPackDescription bool) (copyFinal, statFinal interface{}, outFinal structures.Pack) {
+	checkFirstCopy, checkItemDescription bool) (copyFinal, statFinal interface{}, outFinal structures.Pack) {
 
 	var err error
 
@@ -54,7 +54,7 @@ func TestOperator(t *testing.T, cleanerOp db.Cleaner, transferOp Operator, param
 	require.NoError(t, err)
 	require.NotNil(t, packRepeat)
 
-	if checkPackDescription {
+	if checkItemDescription {
 		require.Equal(t, initialDescription, packRepeat.Description())
 	} else {
 		err = packRepeat.SetDescription(*initialDescription)
@@ -91,7 +91,7 @@ func TestOperator(t *testing.T, cleanerOp db.Cleaner, transferOp Operator, param
 	require.NoError(t, err)
 	require.NotNil(t, packFinal)
 
-	if checkPackDescription {
+	if checkItemDescription {
 		require.Equal(t, packRepeat.Description(), packFinal.Description())
 	} else {
 		err = packFinal.SetDescription(*packRepeat.Description())

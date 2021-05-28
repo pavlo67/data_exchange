@@ -45,7 +45,7 @@ func (transferOp *transferJSONAny) In(pack structures.Pack, params common.Map) e
 	}
 
 	transferOp.packAny = &structures.PackAny{
-		PackDescription: pack.Description(),
+		ItemDescription: pack.Description(),
 		PackData:        structures.NewDataAny(pack.Data().Value()),
 	}
 	return nil

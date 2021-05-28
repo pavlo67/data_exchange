@@ -88,9 +88,8 @@ func (recordsOp *recordsSQLite) Save(item records.Item, identity *auth.Identity)
 
 	if identity == nil {
 
-		identity = &auth.Identity{}
-		// TODO!!!
-		// return "", errors.CommonError(common.NoRightsKey)
+		// identity = &auth.Identity{}
+		return "", errors.CommonError(common.NoRightsKey)
 	}
 
 	// TODO!!! rbac check

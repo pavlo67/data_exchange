@@ -56,15 +56,12 @@ func TestTransferPersonsTypes01(t *testing.T) {
 	require.NotNil(t, transferOp)
 
 	dataInitial := structures.PackAny{
-		PackDescription: &structures.PackDescription{
-			Fields: structures.Fields{},
-			ItemDescription: structures.ItemDescription{
-				URN: ns.URN("test:test" + strconv.FormatInt(time.Now().UnixNano(), 10)),
-				// ErrorsMap: nil,
-				// History:   nil,
-				CreatedAt: time.Now(),
-				// UpdatedAt: nil,
-			},
+		ItemDescription: &structures.ItemDescription{
+			URN: ns.URN("test:test" + strconv.FormatInt(time.Now().UnixNano(), 10)),
+			// ErrorsMap: nil,
+			// History:   nil,
+			CreatedAt: time.Now(),
+			// UpdatedAt: nil,
 		},
 		PackData: structures.NewDataAny([]types01.Person{
 			{

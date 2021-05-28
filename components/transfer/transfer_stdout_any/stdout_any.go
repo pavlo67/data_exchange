@@ -63,7 +63,7 @@ func (transferOp *transferStdoutAny) In(pack structures.Pack, params common.Map)
 	}
 
 	transferOp.packAny = &structures.PackAny{
-		PackDescription: pack.Description(),
+		ItemDescription: pack.Description(),
 		PackData:        structures.NewDataAny(pack.Data().Value()),
 	}
 	return nil
@@ -89,17 +89,17 @@ func (transferOp *transferStdoutAny) Copy(selector *selectors.Term, params commo
 	var items []interface{}
 
 	switch v := transferOp.packAny.PackData.Value().(type) {
-	case structures.Rows:
-		for _, line := range v {
-			items = append(items, line)
-		}
-	case *structures.Rows:
-		if v == nil {
-			return nil, fmt.Errorf(onCopy+": nil data (%T)", transferOp.packAny)
-		}
-		for _, line := range *v {
-			items = append(items, line)
-		}
+	//case structures.Rows:
+	//	for _, line := range v {
+	//		items = append(items, line)
+	//	}
+	//case *structures.Rows:
+	//	if v == nil {
+	//		return nil, fmt.Errorf(onCopy+": nil data (%T)", transferOp.packAny)
+	//	}
+	//	for _, line := range *v {
+	//		items = append(items, line)
+	//	}
 	case []interface{}:
 		items = v
 	case *[]interface{}:

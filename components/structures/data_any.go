@@ -14,12 +14,12 @@ type DataAny struct {
 	data interface{}
 }
 
-func (dataAny *DataAny) IsEqualTo(dataAnother interface{}) (bool, error) {
+func (dataAny *DataAny) IsEqualTo(dataAnother interface{}) bool {
 	if dataAny == nil {
 		// TODO???
-		return dataAnother == nil, nil
+		return dataAnother == nil
 	}
-	return reflect.DeepEqual(dataAny.data, dataAnother), nil
+	return reflect.DeepEqual(dataAny.data, dataAnother)
 }
 
 func (dataAny *DataAny) Value() interface{} {
@@ -28,4 +28,12 @@ func (dataAny *DataAny) Value() interface{} {
 		return nil
 	}
 	return dataAny.data
+}
+
+func (dataAny *DataAny) Stat() *ItemsStat {
+	if dataAny == nil {
+		// TODO???
+		return nil
+	}
+	return nil
 }

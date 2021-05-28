@@ -54,15 +54,12 @@ func TestTransferRecordsTypes01(t *testing.T) {
 	require.NotNil(t, transferOp)
 
 	dataInitial := structures.PackAny{
-		PackDescription: &structures.PackDescription{
-			Fields: structures.Fields{},
-			ItemDescription: structures.ItemDescription{
-				URN: ns.URN("test:test" + strconv.FormatInt(time.Now().UnixNano(), 10)),
-				// ErrorsMap: nil,
-				// History:   nil,
-				CreatedAt: time.Now(),
-				// UpdatedAt: nil,
-			},
+		ItemDescription: &structures.ItemDescription{
+			URN: ns.URN("test:test" + strconv.FormatInt(time.Now().UnixNano(), 10)),
+			// ErrorsMap: nil,
+			// History:   nil,
+			CreatedAt: time.Now(),
+			// UpdatedAt: nil,
 		},
 		PackData: structures.NewDataAny([]types01.Record{
 			{
@@ -106,11 +103,8 @@ func TestTransferRecordsTypes01(t *testing.T) {
 
 	var params common.Map
 
-	err = recordsCleanerOp.Clean(nil)
-	require.NoError(t, err)
-
 	// copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, dataInitial, true, false)
-	copyFinal, statFinal, dataFinal := transfer.TestOperator(t, transferOp, params, &dataInitial, true, false)
+	copyFinal, statFinal, dataFinal := transfer.TestOperator(t, recordsCleanerOp, transferOp, params, &dataInitial, true, false)
 
 	//copyFinal, _ := transferOp.Copy(nil, params)
 	t.Logf("COPY (INTERNAL) FINAL: %#v", copyFinal)

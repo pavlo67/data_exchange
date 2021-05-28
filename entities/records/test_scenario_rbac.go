@@ -1,6 +1,8 @@
 package records
 
 import (
+	"github.com/pavlo67/data/components/structures"
+	"github.com/pavlo67/data/components/tags"
 	"os"
 	"testing"
 
@@ -13,6 +15,59 @@ import (
 
 // TODO: test .History
 // TODO: test .List() with selectors
+
+const authID1 = auth.ID("1")
+const authID2 = auth.ID("2")
+const authID3 = auth.ID("3")
+
+const testNewTag = "testNewTag"
+
+var embedded = []Content{
+	{
+		Title:   "56567",
+		Summary: "3333333",
+		Type:    "test...",
+		Data:    "wqerwer",
+	},
+}
+
+var item11 = Item{
+	Content: Content{
+		Title:   "345456",
+		Summary: "6578gj",
+		Type:    "test",
+		Data:    `{"AAA": "aaa", "BBB": 222}`,
+	},
+	Embedded: embedded,
+	ItemDescription: structures.ItemDescription{
+		Tags: []tags.Item{"1", "333"},
+	},
+}
+
+var item12 = Item{
+	Content: Content{
+		Title:   "345eeeee456rt",
+		Summary: "6578eegj",
+		Type:    "test1",
+		Data:    `{"AAA": "awraa", "BBB": 22552}`,
+	},
+	ItemDescription: structures.ItemDescription{
+		Tags: []tags.Item{"1", "333"},
+	},
+}
+
+var item22 = Item{
+	Content: Content{
+		Title:   "34545ee6rt",
+		Summary: "6578weqreegj",
+		Type:    "test2",
+		Data:    `wqerwer`,
+	},
+	Embedded: append(embedded, embedded...),
+	ItemDescription: structures.ItemDescription{
+		Tags: []tags.Item{"qw1", "333"},
+	},
+}
 
 func OperatorTestScenario(t *testing.T, recordsOp Operator, cleanerOp db.Cleaner, l logger.Operator) {
 

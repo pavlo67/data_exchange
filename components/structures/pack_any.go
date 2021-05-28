@@ -5,23 +5,23 @@ import "github.com/pavlo67/common/common/errors"
 var _ Pack = &PackAny{}
 
 type PackAny struct {
-	*PackDescription
+	*ItemDescription
 	PackData DataAny
 }
 
-func (pack *PackAny) SetDescription(packDescription PackDescription) error {
+func (pack *PackAny) SetDescription(packDescription ItemDescription) error {
 	if pack == nil {
 		return errors.New("no pack to set description")
 	}
-	pack.PackDescription = &packDescription
+	pack.ItemDescription = &packDescription
 	return nil
 }
 
-func (pack *PackAny) Description() *PackDescription {
+func (pack *PackAny) Description() *ItemDescription {
 	if pack == nil {
 		return nil
 	}
-	return pack.PackDescription
+	return pack.ItemDescription
 }
 
 func (pack *PackAny) Data() Data {
